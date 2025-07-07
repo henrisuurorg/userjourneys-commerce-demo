@@ -527,12 +527,30 @@ export async function getProductRecommendations(
   productId: string
 ): Promise<Product[]> {
   if (USE_MOCK_DATA) {
-    // Return 4 random products that are not the current one
-    const recommendations = mockProducts
-      .filter((p) => p.id !== productId)
-      .sort(() => 0.5 - Math.random())
-      .slice(0, 4);
-    return recommendations;
+    // Create a simple hash from productId to ensure consistent results
+    const hash = productId.split("").reduce((a, b) => {
+      a = (a << 5) - a + b.charCodeAt(0);
+      return a & a;
+    }, 0);
+
+    // Use the hash as a seed for consistent "random" selection
+    const availableProducts = mockProducts.filter((p) => p.id !== productId);
+    const seed = Math.abs(hash);
+
+    // Deterministic selection based on product ID hash
+    const shuffled = [...availableProducts];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(
+        ((((seed + i) * 9301 + 49297) % 233280) / 233280) * (i + 1)
+      );
+      if (j < shuffled.length) {
+        const temp = shuffled[i]!;
+        shuffled[i] = shuffled[j]!;
+        shuffled[j] = temp;
+      }
+    }
+
+    return shuffled.slice(0, 4);
   }
   // 'use cache';
   // cacheTag(TAGS.products);
