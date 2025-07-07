@@ -14,6 +14,8 @@ export default {
       },
     ],
   },
+  // Allow PostHog to access images during session recording
+  allowedDevOrigins: ["https://eu.posthog.com", "https://eu.i.posthog.com"],
   async rewrites() {
     return [
       {
