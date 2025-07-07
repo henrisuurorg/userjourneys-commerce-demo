@@ -10,13 +10,6 @@ import { cookies, headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { mockProducts } from "../mock-data";
 import {
-  addToCartMutation,
-  createCartMutation,
-  editCartItemsMutation,
-  removeFromCartMutation,
-} from "./mutations/cart";
-import { getCartQuery } from "./queries/cart";
-import {
   getCollectionProductsQuery,
   getCollectionQuery,
   getCollectionsQuery,
@@ -36,14 +29,11 @@ import {
   Menu,
   Page,
   Product,
-  ShopifyAddToCartOperation,
   ShopifyCart,
-  ShopifyCartOperation,
   ShopifyCollection,
   ShopifyCollectionOperation,
   ShopifyCollectionProductsOperation,
   ShopifyCollectionsOperation,
-  ShopifyCreateCartOperation,
   ShopifyMenuOperation,
   ShopifyPageOperation,
   ShopifyPagesOperation,
@@ -51,8 +41,6 @@ import {
   ShopifyProductOperation,
   ShopifyProductRecommendationsOperation,
   ShopifyProductsOperation,
-  ShopifyRemoveFromCartOperation,
-  ShopifyUpdateCartOperation,
 } from "./types";
 
 const domain = process.env.SHOPIFY_STORE_DOMAIN
@@ -227,178 +215,96 @@ const reshapeProducts = (products: ShopifyProduct[]) => {
   return reshapedProducts;
 };
 
-const mockCart: Cart = {
-  id: "mock-cart-id",
-  checkoutUrl: "",
-  cost: {
-    subtotalAmount: { amount: "100.0", currencyCode: "USD" },
-    totalAmount: { amount: "110.0", currencyCode: "USD" },
-    totalTaxAmount: { amount: "10.0", currencyCode: "USD" },
-  },
-  lines: [
-    {
-      id: "line_1",
-      quantity: 2,
+export async function getCart(): Promise<Cart> {
+  const cartCookie = (await cookies()).get("cart")?.value;
+  const cartItems: { merchandiseId: string; quantity: number }[] = cartCookie
+    ? JSON.parse(cartCookie)
+    : [];
+
+  if (cartItems.length === 0) {
+    return {
+      id: "mock-cart",
+      checkoutUrl: "/checkout/mock",
       cost: {
-        totalAmount: { amount: "50.0", currencyCode: "USD" },
+        subtotalAmount: { amount: "0.0", currencyCode: "USD" },
+        totalAmount: { amount: "0.0", currencyCode: "USD" },
+        totalTaxAmount: { amount: "0.0", currencyCode: "USD" },
       },
-      merchandise: {
-        id: "var_tshirt_black",
-        title: "Black",
-        selectedOptions: [{ name: "Color", value: "Black" }],
-        product: mockProducts[0]!,
-      },
-    },
-  ],
-  totalQuantity: 2,
-};
-
-export async function createCart(): Promise<Cart> {
-  if (USE_MOCK_DATA) {
-    return { ...mockCart, lines: [], totalQuantity: 0 };
-  }
-  const res = await shopifyFetch<ShopifyCreateCartOperation>({
-    query: createCartMutation,
-  });
-
-  return reshapeCart(res.body.data.cartCreate.cart);
-}
-
-export async function addToCart(
-  lines: { merchandiseId: string; quantity: number }[]
-): Promise<Cart> {
-  if (USE_MOCK_DATA) {
-    // A bit more advanced: find product and add to a simulated cart
-    const line = lines[0];
-    if (!line) return mockCart;
-
-    const product = mockProducts.find((p) =>
-      p.variants.some((v) => v.id === line.merchandiseId)
-    );
-    const variant = product?.variants.find((v) => v.id === line.merchandiseId);
-    if (!product || !variant) return mockCart;
-
-    const newLine = {
-      id: `line_${Math.random()}`,
-      quantity: line.quantity,
-      cost: {
-        totalAmount: {
-          amount: (parseFloat(variant.price.amount) * line.quantity).toString(),
-          currencyCode: "USD",
-        },
-      },
-      merchandise: {
-        id: variant.id,
-        title: variant.title,
-        selectedOptions: variant.selectedOptions,
-        product: product,
-      },
+      lines: [],
+      totalQuantity: 0,
     };
-    return { ...mockCart, lines: [...mockCart.lines, newLine] };
   }
-  const cartId = (await cookies()).get("cartId")?.value!;
-  const res = await shopifyFetch<ShopifyAddToCartOperation>({
-    query: addToCartMutation,
-    variables: {
-      cartId,
-      lines,
+
+  const lines: Cart["lines"] = [];
+  let subtotal = 0;
+
+  for (const item of cartItems) {
+    // Find the variant and its parent product
+    let variant;
+    let product;
+
+    for (const p of mockProducts) {
+      const foundVariant = p.variants.find((v) => v.id === item.merchandiseId);
+      if (foundVariant) {
+        variant = foundVariant;
+        product = p;
+        break;
+      }
+    }
+
+    if (variant && product) {
+      const { variants, ...productForCart } = product;
+      const lineTotal = parseFloat(variant.price.amount) * item.quantity;
+      subtotal += lineTotal;
+
+      lines.push({
+        id: variant.id,
+        quantity: item.quantity,
+        cost: {
+          totalAmount: {
+            amount: lineTotal.toString(),
+            currencyCode: "USD",
+          },
+        },
+        merchandise: {
+          id: variant.id,
+          title: variant.title,
+          selectedOptions: variant.selectedOptions,
+          product: productForCart,
+        },
+      });
+    }
+  }
+
+  return {
+    id: "mock-cart",
+    checkoutUrl: "/checkout/mock",
+    cost: {
+      subtotalAmount: { amount: subtotal.toString(), currencyCode: "USD" },
+      totalAmount: { amount: subtotal.toString(), currencyCode: "USD" }, // Assuming no tax/shipping for mock
+      totalTaxAmount: { amount: "0.0", currencyCode: "USD" },
     },
-  });
-  return reshapeCart(res.body.data.cartLinesAdd.cart);
-}
-
-export async function removeFromCart(lineIds: string[]): Promise<Cart> {
-  if (USE_MOCK_DATA) {
-    return { ...mockCart, lines: [], totalQuantity: 0 };
-  }
-  const cartId = (await cookies()).get("cartId")?.value!;
-  const res = await shopifyFetch<ShopifyRemoveFromCartOperation>({
-    query: removeFromCartMutation,
-    variables: {
-      cartId,
-      lineIds,
-    },
-  });
-
-  return reshapeCart(res.body.data.cartLinesRemove.cart);
-}
-
-export async function updateCart(
-  lines: { id: string; merchandiseId: string; quantity: number }[]
-): Promise<Cart> {
-  if (USE_MOCK_DATA) {
-    const line = lines[0];
-    if (!line) return mockCart;
-    const existingLine = mockCart.lines[0];
-    if (!existingLine) return mockCart;
-    const updatedLine = { ...existingLine, quantity: line.quantity };
-    return { ...mockCart, lines: [updatedLine] };
-  }
-  const cartId = (await cookies()).get("cartId")?.value!;
-  const res = await shopifyFetch<ShopifyUpdateCartOperation>({
-    query: editCartItemsMutation,
-    variables: {
-      cartId,
-      lines,
-    },
-  });
-
-  return reshapeCart(res.body.data.cartLinesUpdate.cart);
-}
-
-export async function getCart(): Promise<Cart | undefined> {
-  if (USE_MOCK_DATA) {
-    return mockCart;
-  }
-  const cartId = (await cookies()).get("cartId")?.value;
-
-  if (!cartId) {
-    return undefined;
-  }
-
-  const res = await shopifyFetch<ShopifyCartOperation>({
-    query: getCartQuery,
-    variables: { cartId },
-  });
-
-  // Old carts becomes `null` when you checkout.
-  if (!res.body.data.cart) {
-    return undefined;
-  }
-
-  return reshapeCart(res.body.data.cart);
+    lines: lines,
+    totalQuantity: lines.reduce((acc, line) => acc + line.quantity, 0),
+  };
 }
 
 export async function getCollection(
   handle: string
 ): Promise<Collection | undefined> {
   if (USE_MOCK_DATA) {
-    const allTags = new Set<string>();
-    mockProducts.forEach((p) => p.tags.forEach((t) => allTags.add(t)));
-    const collections = Array.from(allTags).map(
-      (tag) =>
-        ({
-          handle: tag.toLowerCase(),
-          title: tag,
-          description: `Products tagged with "${tag}"`,
-          path: `/search/${tag.toLowerCase()}`,
-        }) as Collection
-    );
-    return collections.find((c) => c.handle === handle);
+    const allCollections = await getCollections();
+    return allCollections.find((col) => col.handle === handle);
   }
 
-  // 'use cache';
-  // cacheTag(TAGS.collections);
-  // cacheLife('days');
-
-  const res = await shopifyFetch<ShopifyCollectionOperation>({
+  const { body } = await shopifyFetch<ShopifyCollectionOperation>({
     query: getCollectionQuery,
     variables: {
       handle,
     },
   });
 
-  return reshapeCollection(res.body.data.collection);
+  return reshapeCollection(body.data.collection);
 }
 
 export async function getCollectionProducts({
@@ -423,11 +329,7 @@ export async function getCollectionProducts({
     return products;
   }
 
-  // 'use cache';
-  // cacheTag(TAGS.collections, TAGS.products);
-  // cacheLife('days');
-
-  const res = await shopifyFetch<ShopifyCollectionProductsOperation>({
+  const { body } = await shopifyFetch<ShopifyCollectionProductsOperation>({
     query: getCollectionProductsQuery,
     variables: {
       handle: collection,
@@ -436,13 +338,13 @@ export async function getCollectionProducts({
     },
   });
 
-  if (!res.body.data.collection) {
+  if (!body.data.collection) {
     console.log(`No collection found for \`${collection}\``);
     return [];
   }
 
   return reshapeProducts(
-    removeEdgesAndNodes(res.body.data.collection.products)
+    body.data.collection.products.edges.map((e) => e.node)
   );
 }
 
