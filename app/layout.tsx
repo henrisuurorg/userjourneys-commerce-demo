@@ -1,48 +1,62 @@
-import { CartProvider } from "components/cart/cart-context";
-import { Navbar } from "components/layout/navbar";
-import { GeistSans } from "geist/font/sans";
-import { getCart } from "lib/shopify-mock";
-import { baseUrl } from "lib/utils";
-import { ReactNode } from "react";
-import { Toaster } from "sonner";
-import "./globals.css";
-import { PostHogProvider } from "./providers";
+import { Inter } from 'next/font/google';
+import { ReactNode, Suspense } from 'react';
 
-const { SITE_NAME } = process.env;
+import { Providers } from 'app/providers';
+import { Navbar } from 'components/layout/navbar';
+import { getCart } from 'lib/shopify-mock/server';
+import { baseUrl } from 'lib/utils';
+import { Toaster } from 'sonner';
+import './globals.css';
+
+const { SITE_NAME, TWITTER_CREATOR, TWITTER_SITE } = process.env;
+
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter'
+});
 
 export const metadata = {
   metadataBase: new URL(baseUrl),
   title: {
     default: SITE_NAME!,
-    template: `%s | ${SITE_NAME}`,
+    template: `%s | ${SITE_NAME}`
   },
   robots: {
     follow: true,
     index: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1
+    }
   },
+  icons: {
+    shortcut: '/favicon.ico'
+  },
+  verification: {
+    google: 'IzKq23k-768f7T-2N_1gZf4g4Qz3e2a1b0c9d8e7f'
+  }
 };
 
-export default async function RootLayout({
-  children,
-}: {
-  children: ReactNode;
-}) {
-  // Don't await the fetch, pass the Promise to the context provider
+export default async function RootLayout({ children }: { children: ReactNode }) {
   const cart = getCart();
 
   return (
-    <html lang="en" className={GeistSans.variable}>
+    <html lang="en" className={inter.variable}>
       <body className="bg-neutral-50 text-black selection:bg-teal-300 dark:bg-neutral-900 dark:text-white dark:selection:bg-pink-500 dark:selection:text-white">
-        <PostHogProvider>
-          <CartProvider cartPromise={cart}>
-            <Navbar />
+        <Providers cartPromise={cart}>
+          <Navbar />
+          <Suspense>
             <main>
               {children}
               <Toaster closeButton />
               {/* <WelcomeToast /> */}
             </main>
-          </CartProvider>
-        </PostHogProvider>
+          </Suspense>
+        </Providers>
       </body>
     </html>
   );

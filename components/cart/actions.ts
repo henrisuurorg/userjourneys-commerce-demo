@@ -1,7 +1,6 @@
 "use server";
 
 import { TAGS } from "lib/constants";
-import { getCart } from "lib/shopify-mock";
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -11,20 +10,48 @@ type SimpleCartItem = {
   quantity: number;
 };
 
-async function getCartFromCookie(): Promise<SimpleCartItem[]> {
+type CartPayload = {
+  items: SimpleCartItem[];
+  promoCode?: string;
+};
+
+async function getCartFromCookie(): Promise<CartPayload> {
   const cartCookie = (await cookies()).get("cart")?.value;
   if (cartCookie) {
     try {
-      return JSON.parse(cartCookie);
+      const parsed = JSON.parse(cartCookie);
+      // Ensure it's in the new format
+      if (Array.isArray(parsed)) {
+        return { items: parsed, promoCode: undefined };
+      }
+      return parsed;
     } catch (e) {
-      return [];
+      return { items: [], promoCode: undefined };
     }
   }
-  return [];
+  return { items: [], promoCode: undefined };
 }
 
-async function setCartInCookie(cart: SimpleCartItem[]) {
+async function setCartInCookie(cart: CartPayload) {
   (await cookies()).set("cart", JSON.stringify(cart));
+}
+
+export async function applyPromoCode(prevState: any, formData: FormData) {
+  const promoCode = formData.get('promoCode') as string;
+
+  if (promoCode.toUpperCase() !== 'SAVE20') {
+    return 'Invalid promo code';
+  }
+
+  try {
+    const cart = await getCartFromCookie();
+    cart.promoCode = promoCode;
+    await setCartInCookie(cart);
+    revalidateTag(TAGS.cart);
+    return null; // Success
+  } catch (e) {
+    return 'Error applying promo code';
+  }
 }
 
 export async function addItem(
@@ -37,14 +64,14 @@ export async function addItem(
 
   try {
     const cart = await getCartFromCookie();
-    const existingItem = cart.find(
+    const existingItem = cart.items.find(
       (item) => item.merchandiseId === selectedVariantId
     );
 
     if (existingItem) {
       existingItem.quantity++;
     } else {
-      cart.push({ merchandiseId: selectedVariantId, quantity: 1 });
+      cart.items.push({ merchandiseId: selectedVariantId, quantity: 1 });
     }
     await setCartInCookie(cart);
     revalidateTag(TAGS.cart);
@@ -56,8 +83,8 @@ export async function addItem(
 export async function removeItem(prevState: any, merchandiseId: string) {
   try {
     const cart = await getCartFromCookie();
-    const newCart = cart.filter((item) => item.merchandiseId !== merchandiseId);
-    await setCartInCookie(newCart);
+    cart.items = cart.items.filter((item) => item.merchandiseId !== merchandiseId);
+    await setCartInCookie(cart);
     revalidateTag(TAGS.cart);
   } catch (e) {
     return "Error removing item from cart";
@@ -77,22 +104,22 @@ export async function updateItemQuantity(
     const cart = await getCartFromCookie();
 
     if (quantity === 0) {
-      const newCart = cart.filter(
+      cart.items = cart.items.filter(
         (item) => item.merchandiseId !== merchandiseId
       );
-      await setCartInCookie(newCart);
+      await setCartInCookie(cart);
       revalidateTag(TAGS.cart);
       return;
     }
 
-    const existingItem = cart.find(
+    const existingItem = cart.items.find(
       (item) => item.merchandiseId === merchandiseId
     );
 
     if (existingItem) {
       existingItem.quantity = quantity;
     } else if (quantity > 0) {
-      cart.push({ merchandiseId, quantity });
+      cart.items.push({ merchandiseId, quantity });
     }
 
     await setCartInCookie(cart);
@@ -104,6 +131,5 @@ export async function updateItemQuantity(
 }
 
 export async function redirectToCheckout() {
-  let cart = await getCart();
-  redirect(cart.checkoutUrl);
+  redirect('/checkout');
 }

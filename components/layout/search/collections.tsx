@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { Suspense } from 'react';
 
-import { getCollections } from 'lib/shopify-mock';
+import { getCollections } from 'lib/shopify-mock/client';
 import FilterList from './filter';
 
 async function CollectionList() {

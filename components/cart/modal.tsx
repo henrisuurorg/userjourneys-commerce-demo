@@ -9,9 +9,9 @@ import { DEFAULT_OPTION } from "lib/constants";
 import { createUrl } from "lib/utils";
 import Image from "next/image";
 import Link from "next/link";
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useActionState, useEffect, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
-import { redirectToCheckout } from "./actions";
+import { applyPromoCode, redirectToCheckout } from "./actions";
 import { useCart } from "./cart-context";
 import { DeleteItemButton } from "./delete-item-button";
 import { EditItemQuantityButton } from "./edit-item-quantity-button";
@@ -20,6 +20,37 @@ import OpenCart from "./open-cart";
 type MerchandiseSearchParams = {
   [key: string]: string;
 };
+
+function PromoCodeForm() {
+  const [message, formAction] = useActionState(applyPromoCode, null);
+
+  return (
+    <form action={formAction} className="mt-4">
+      <label
+        htmlFor="promo-code"
+        className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+      >
+        Promo Code
+      </label>
+      <div className="mt-1 flex rounded-md shadow-sm">
+        <input
+          type="text"
+          name="promoCode"
+          id="promo-code"
+          className="block w-full flex-1 rounded-none rounded-l-md border-gray-300 px-3 py-2 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          placeholder="Enter code"
+        />
+        <button
+          type="submit"
+          className="inline-flex items-center rounded-r-md border border-l-0 border-gray-300 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
+        >
+          Apply
+        </button>
+      </div>
+      {message && <p className="mt-2 text-sm text-red-600">{message}</p>}
+    </form>
+  );
+}
 
 export default function CartModal() {
   const { cart, updateCartItem } = useCart();
@@ -201,6 +232,16 @@ export default function CartModal() {
                       <p>Shipping</p>
                       <p className="text-right">Calculated at checkout</p>
                     </div>
+                    {cart.cost.discountAmount && cart.cost.discountAmount.amount !== '0.0' && (
+                      <div className="mb-3 flex items-center justify-between border-b border-neutral-200 pb-1 pt-1 dark:border-neutral-700">
+                        <p>Discount</p>
+                        <Price
+                          className="text-right text-base text-green-600 dark:text-green-400"
+                          amount={cart.cost.discountAmount.amount}
+                          currencyCode={cart.cost.discountAmount.currencyCode}
+                        />
+                      </div>
+                    )}
                     <div className="mb-3 flex items-center justify-between border-b border-neutral-200 pb-1 pt-1 dark:border-neutral-700">
                       <p>Total</p>
                       <Price
@@ -210,7 +251,8 @@ export default function CartModal() {
                       />
                     </div>
                   </div>
-                  <form action={redirectToCheckout}>
+                  <PromoCodeForm />
+                  <form action={redirectToCheckout} className="mt-4">
                     <CheckoutButton />
                   </form>
                 </div>

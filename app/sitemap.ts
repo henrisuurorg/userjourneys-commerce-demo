@@ -1,4 +1,4 @@
-import { getCollections, getPages, getProducts } from 'lib/shopify-mock';
+import { getCollections, getPages, getProducts } from 'lib/shopify-mock/client';
 import { baseUrl, validateEnvironmentVariables } from 'lib/utils';
 import { MetadataRoute } from 'next';
 

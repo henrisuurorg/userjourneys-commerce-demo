@@ -1,5 +1,5 @@
 import { GridTileImage } from 'components/grid/tile';
-import { getCollectionProducts } from 'lib/shopify-mock';
+import { getCollectionProducts } from 'lib/shopify-mock/client';
 import type { Product } from 'lib/shopify-mock/types';
 import Link from 'next/link';
 

@@ -1,6 +1,6 @@
 import CartModal from 'components/cart/modal';
 import LogoSquare from 'components/logo-square';
-import { getMenu } from 'lib/shopify-mock';
+import { getMenu } from 'lib/shopify-mock/client';
 import { Menu } from 'lib/shopify-mock/types';
 import Link from 'next/link';
 import { Suspense } from 'react';

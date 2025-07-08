@@ -7,17 +7,20 @@ export type Cart = {
     subtotalAmount: Money;
     totalAmount: Money;
     totalTaxAmount: Money;
+    discountAmount?: Money;
   };
   lines: CartItem[];
   totalQuantity: number;
 };
 
-export type CartProduct = {
-  id: string;
-  handle: string;
-  title: string;
-  featuredImage: Image;
+export type CartCost = {
+  subtotalAmount: Money;
+  totalAmount: Money;
+  totalTaxAmount: Money;
+  discountAmount?: Money;
 };
+
+export type CartProduct = Omit<Product, 'variants'>;
 
 export type CartItem = {
   id: string | undefined;
