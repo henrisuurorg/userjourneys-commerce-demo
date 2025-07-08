@@ -1,7 +1,7 @@
 "use server";
 
 import { TAGS } from "lib/constants";
-import { getCart } from "lib/shopify";
+import { getCart } from "lib/shopify-mock";
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";

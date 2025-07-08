@@ -1,4 +1,4 @@
-import type { Product } from "lib/shopify/types";
+import type { Product } from "lib/shopify-mock/types";
 
 const imagePath = (filename: string) => `/product-images/${filename}`;
 

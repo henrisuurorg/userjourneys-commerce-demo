@@ -1,17 +1,17 @@
 'use client';
 
 import type {
-  Cart,
-  CartItem,
-  Product,
-  ProductVariant
-} from 'lib/shopify/types';
+    Cart,
+    CartItem,
+    Product,
+    ProductVariant
+} from 'lib/shopify-mock/types';
 import React, {
-  createContext,
-  use,
-  useContext,
-  useMemo,
-  useOptimistic
+    createContext,
+    use,
+    useContext,
+    useMemo,
+    useOptimistic
 } from 'react';
 
 type UpdateType = 'plus' | 'minus' | 'delete';

@@ -6,13 +6,7 @@ export default {
   },
   images: {
     formats: ["image/avif", "image/webp"],
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "cdn.shopify.com",
-        pathname: "/s/files/**",
-      },
-    ],
+    // No remote patterns needed for mock data - images are served locally
   },
   // Allow PostHog to access images during session recording
   allowedDevOrigins: ["eu.posthog.com", "eu.i.posthog.com"],
