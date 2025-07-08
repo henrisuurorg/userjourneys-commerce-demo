@@ -133,3 +133,13 @@ export async function updateItemQuantity(
 export async function redirectToCheckout() {
   redirect('/checkout');
 }
+
+export async function clearCart() {
+  try {
+    await setCartInCookie({ items: [], promoCode: undefined });
+    revalidateTag(TAGS.cart);
+  } catch (e) {
+    console.error(e);
+    return 'Error clearing cart';
+  }
+}

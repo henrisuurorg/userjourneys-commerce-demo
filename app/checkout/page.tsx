@@ -1,5 +1,6 @@
 import Price from 'components/price';
 import { getCart } from 'lib/shopify-mock/server';
+import Link from 'next/link';
 
 export default async function CheckoutPage() {
   const cart = await getCart();
@@ -74,9 +75,12 @@ export default async function CheckoutPage() {
         </div>
 
         <div className="mt-8">
-          <button className="w-full rounded-md bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700">
+          <Link
+            href="/checkout/payment"
+            className="block w-full rounded-md bg-blue-600 px-6 py-3 text-center font-semibold text-white hover:bg-blue-700"
+          >
             Proceed to Payment
-          </button>
+          </Link>
         </div>
       </div>
     </div>
