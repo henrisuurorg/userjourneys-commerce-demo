@@ -15,20 +15,20 @@ export default {
     ],
   },
   // Allow PostHog to access images during session recording
-  allowedDevOrigins: ["https://eu.posthog.com", "https://eu.i.posthog.com"],
+  allowedDevOrigins: ["eu.posthog.com", "eu.i.posthog.com"],
   async rewrites() {
     return [
       {
-        source: "/ingest/static/:path*",
+        source: "/api/event/static/:path*",
         destination: "https://eu-assets.i.posthog.com/static/:path*",
       },
       {
-        source: "/ingest/:path*",
-        destination: "https://eu.i.posthog.com/:path*",
+        source: "/api/event/decide",
+        destination: "https://eu.i.posthog.com/decide",
       },
       {
-        source: "/ingest/decide",
-        destination: "https://eu.i.posthog.com/decide",
+        source: "/api/event/:path*",
+        destination: "https://eu.i.posthog.com/:path*",
       },
     ];
   },

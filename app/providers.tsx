@@ -27,7 +27,7 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
     console.log("🚀 PostHog initializing with reverse proxy...");
 
     posthog.init(posthogKey, {
-      api_host: "/ingest", // Use the reverse proxy
+      api_host: "/api/event", // Use the reverse proxy
       ui_host: "https://eu.posthog.com",
       defaults: "2025-05-24",
       capture_pageview: false,
