@@ -1,17 +1,17 @@
 'use client';
 
 import type {
-    Cart,
-    CartItem,
-    Product,
-    ProductVariant
+  Cart,
+  CartItem,
+  Product,
+  ProductVariant
 } from 'lib/shopify-mock/types';
 import React, {
-    createContext,
-    use,
-    useContext,
-    useMemo,
-    useOptimistic
+  createContext,
+  use,
+  useContext,
+  useMemo,
+  useOptimistic
 } from 'react';
 
 type UpdateType = 'plus' | 'minus' | 'delete';
@@ -72,6 +72,8 @@ function createOrUpdateCartItem(
 ): CartItem {
   const quantity = existingItem ? existingItem.quantity + 1 : 1;
   const totalAmount = calculateItemCost(quantity, variant.price.amount);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { variants, ...cartProduct } = product;
 
   return {
     id: existingItem?.id,
@@ -85,13 +87,9 @@ function createOrUpdateCartItem(
     merchandise: {
       id: variant.id,
       title: variant.title,
+      availableForSale: variant.availableForSale,
       selectedOptions: variant.selectedOptions,
-      product: {
-        id: product.id,
-        handle: product.handle,
-        title: product.title,
-        featuredImage: product.featuredImage
-      }
+      product: cartProduct
     }
   };
 }

@@ -1,7 +1,7 @@
 export type Maybe<T> = T | null;
 
 export type Cart = {
-  id: string;
+  id: string | undefined;
   checkoutUrl: string;
   cost: {
     subtotalAmount: Money;
