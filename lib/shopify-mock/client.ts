@@ -1,9 +1,9 @@
 import { mockProducts } from '../mock-data';
 import {
-    Collection,
-    Menu,
-    Page,
-    Product
+  Collection,
+  Menu,
+  Page,
+  Product
 } from './types';
 
 // Functions that are safe to run on the client
@@ -124,7 +124,11 @@ export async function getPages(): Promise<Page[]> {
 }
 
 export async function getProduct(handle: string): Promise<Product | undefined> {
-  return mockProducts.find((p) => p.handle === handle);
+  const product = mockProducts.find((p) => p.handle === handle);
+  if (product) {
+    product.availableForSale = true;
+  }
+  return product;
 }
 
 export async function getProductRecommendations(productId: string): Promise<Product[]> {

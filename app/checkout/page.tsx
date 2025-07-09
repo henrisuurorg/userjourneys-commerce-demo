@@ -1,6 +1,31 @@
 import Price from 'components/price';
 import { getCart } from 'lib/shopify-mock/server';
+import { CartItem } from 'lib/shopify-mock/types';
 import Link from 'next/link';
+
+function CheckoutActions({ cart }: { cart: { lines: CartItem[] } }) {
+  const anyItemOutOfStock = cart.lines.some((item) => !item.merchandise.availableForSale);
+
+  if (anyItemOutOfStock) {
+    return (
+      <div
+        className="block w-full cursor-not-allowed rounded-md bg-gray-400 px-6 py-3 text-center font-semibold text-white"
+        aria-disabled="true"
+      >
+        Proceed to Payment
+      </div>
+    );
+  }
+
+  return (
+    <Link
+      href="/checkout/payment"
+      className="block w-full rounded-md bg-blue-600 px-6 py-3 text-center font-semibold text-white hover:bg-blue-700"
+    >
+      Proceed to Payment
+    </Link>
+  );
+}
 
 export default async function CheckoutPage() {
   const cart = await getCart();
@@ -22,7 +47,12 @@ export default async function CheckoutPage() {
 
         <div className="mb-6 space-y-4">
           {cart.lines.map((item) => (
-            <div key={item.id} className="flex items-center justify-between">
+            <div
+              key={item.id}
+              className={`flex items-center justify-between ${
+                !item.merchandise.availableForSale ? 'opacity-50' : ''
+              }`}
+            >
               <div>
                 <p className="font-semibold text-gray-800 dark:text-white">
                   {item.merchandise.product.title}
@@ -30,6 +60,9 @@ export default async function CheckoutPage() {
                 <p className="text-sm text-gray-500 dark:text-gray-400">
                   {item.merchandise.title} | Qty: {item.quantity}
                 </p>
+                {!item.merchandise.availableForSale && (
+                  <p className="text-sm text-red-500">Out of Stock</p>
+                )}
               </div>
               <Price
                 className="text-gray-800 dark:text-white"
@@ -75,12 +108,7 @@ export default async function CheckoutPage() {
         </div>
 
         <div className="mt-8">
-          <Link
-            href="/checkout/payment"
-            className="block w-full rounded-md bg-blue-600 px-6 py-3 text-center font-semibold text-white hover:bg-blue-700"
-          >
-            Proceed to Payment
-          </Link>
+          <CheckoutActions cart={cart} />
         </div>
       </div>
     </div>

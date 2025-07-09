@@ -857,7 +857,7 @@ export const mockProducts: Product[] = [
       {
         id: "var_cowboy_tan_7_1_4",
         title: "Tan / 7 1/4",
-        availableForSale: true,
+        availableForSale: false,
         selectedOptions: [
           { name: "Color", value: "Tan" },
           { name: "Size", value: "7 1/4" },
@@ -1826,7 +1826,7 @@ export const mockProducts: Product[] = [
       {
         id: "var_acme_tshirt_blue_l",
         title: "Blue / L",
-        availableForSale: true,
+        availableForSale: false,
         selectedOptions: [
           { name: "Color", value: "Blue" },
           { name: "Size", value: "L" },

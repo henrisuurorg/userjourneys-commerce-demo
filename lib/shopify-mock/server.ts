@@ -83,7 +83,8 @@ export async function getCart(): Promise<Cart> {
           id: variant.id,
           title: variant.title,
           selectedOptions: variant.selectedOptions,
-          product: productForCart as CartProduct
+          product: productForCart as CartProduct,
+          availableForSale: variant.availableForSale
         }
       });
     }
