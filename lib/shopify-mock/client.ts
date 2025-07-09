@@ -127,6 +127,9 @@ export async function getProduct(handle: string): Promise<Product | undefined> {
   const product = mockProducts.find((p) => p.handle === handle);
   if (product) {
     product.availableForSale = true;
+    product.variants.forEach((variant) => {
+      variant.availableForSale = true;
+    });
   }
   return product;
 }
