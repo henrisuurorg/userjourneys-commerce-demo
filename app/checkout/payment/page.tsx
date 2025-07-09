@@ -51,12 +51,30 @@ export default function PaymentPage() {
                 />
               </div>
             ))}
-            <div className="flex justify-between border-t border-gray-200 pt-2 font-bold dark:border-gray-700">
-              <span>Total</span>
-              <Price
-                amount={cart.cost.totalAmount.amount}
-                currencyCode={cart.cost.totalAmount.currencyCode}
-              />
+            <div className="space-y-2 border-t border-gray-200 pt-4 dark:border-gray-700">
+              <div className="flex justify-between text-sm text-gray-600 dark:text-gray-300">
+                <span>Subtotal</span>
+                <Price
+                  amount={cart.cost.subtotalAmount.amount}
+                  currencyCode={cart.cost.subtotalAmount.currencyCode}
+                />
+              </div>
+              {cart.cost.discountAmount && cart.cost.discountAmount.amount !== '0.0' && (
+                <div className="flex justify-between text-sm text-green-600 dark:text-green-400">
+                  <span>Discount</span>
+                  <Price
+                    amount={cart.cost.discountAmount.amount}
+                    currencyCode={cart.cost.discountAmount.currencyCode}
+                  />
+                </div>
+              )}
+              <div className="flex justify-between border-t border-gray-200 pt-2 font-bold dark:border-gray-700">
+                <span>Total</span>
+                <Price
+                  amount={cart.cost.totalAmount.amount}
+                  currencyCode={cart.cost.totalAmount.currencyCode}
+                />
+              </div>
             </div>
           </div>
         </div>
