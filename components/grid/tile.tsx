@@ -6,6 +6,7 @@ export function GridTileImage({
   isInteractive = true,
   active,
   label,
+  alt,
   ...props
 }: {
   isInteractive?: boolean;
@@ -16,7 +17,8 @@ export function GridTileImage({
     currencyCode: string;
     position?: 'bottom' | 'center';
   };
-} & React.ComponentProps<typeof Image>) {
+  alt?: string;
+} & Omit<React.ComponentProps<typeof Image>, 'alt'>) {
   return (
     <div
       className={clsx(
@@ -33,6 +35,7 @@ export function GridTileImage({
           className={clsx('relative h-full w-full object-contain', {
             'transition duration-300 ease-in-out group-hover:scale-105': isInteractive
           })}
+          alt={alt || label?.title || ''}
           {...props}
         />
       ) : null}
