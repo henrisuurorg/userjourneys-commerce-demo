@@ -4,8 +4,8 @@ import { useCurrency } from 'components/currency-context';
 
 const conversionRates = {
   USD: 1,
-  EUR: 0.92,
-  GBP: 0.79
+  EUR: 0.85,
+  GBP: 0.74
 };
 
 const currencySymbols = {
@@ -27,9 +27,11 @@ const Price = ({
 } & React.ComponentProps<'p'>) => {
   const { currency: selectedCurrency } = useCurrency();
 
-  const convertedAmount =
-    (parseFloat(amount) * conversionRates[selectedCurrency as keyof typeof conversionRates]) /
-    conversionRates[currencyCode as keyof typeof conversionRates];
+  // Temporary comment for testing currency display
+  // const convertedAmount =
+  //   (parseFloat(amount) * conversionRates[selectedCurrency as keyof typeof conversionRates]) /
+  //   conversionRates[currencyCode as keyof typeof conversionRates];
+  const convertedAmount = parseFloat(amount);
 
   const displayAmount = new Intl.NumberFormat(undefined, {
     style: 'currency',
