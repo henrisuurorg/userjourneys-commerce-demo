@@ -1100,11 +1100,11 @@ export const mockProducts: Product[] = [
     id: "prod_acme_bomber_jacket",
     handle: "acme-bomber-jacket",
     availableForSale: true,
-    title: "Acme Bomber Jacket",
+    title: "The Special Edition Anniversary All-Weather Performance Bomber Jacket",
     description:
-      "The multi-season must-have jacket: light and classic for daily wear, with a soft fleece lining for extra warmth.",
+      "The Bomber Jacket is a stylish and versatile outerwear piece. It's made from a durable and water-resistant material, making it perfect for everyday wear. The jacket has a relaxed fit and features a ribbed collar, cuffs, and hem. It also has two front pockets and a zippered sleeve pocket. The Bomber Jacket is available in a variety of colors and sizes, so you can find the perfect one for you.",
     descriptionHtml:
-      "<p>The multi-season must-have jacket: light and classic for daily wear, with a soft fleece lining for extra warmth.</p>",
+      "<p>The Bomber Jacket is a stylish and versatile outerwear piece. It's made from a durable and water-resistant material, making it perfect for everyday wear. The jacket has a relaxed fit and features a ribbed collar, cuffs, and hem. It also has two front pockets and a zippered sleeve pocket. The Bomber Jacket is available in a variety of colors and sizes, so you can find the perfect one for you.</p>",
     options: [
       {
         id: "opt_bomber_size",
