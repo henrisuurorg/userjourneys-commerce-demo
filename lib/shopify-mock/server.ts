@@ -66,7 +66,7 @@ export async function getCart(): Promise<Cart> {
     }
 
     if (variant && product) {
-      const { variants, ...productForCart }: { variants: any;[key: string]: any } = product;
+      const { variants, ...productForCart } = product;
       const lineTotal = parseFloat(variant.price.amount) * item.quantity;
       subtotal += lineTotal;
 

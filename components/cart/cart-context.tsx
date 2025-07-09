@@ -87,7 +87,7 @@ function createOrUpdateCartItem(
     merchandise: {
       id: variant.id,
       title: variant.title,
-      availableForSale: variant.availableForSale,
+      availableForSale: true, // Optimistic update
       selectedOptions: variant.selectedOptions,
       product: cartProduct
     }

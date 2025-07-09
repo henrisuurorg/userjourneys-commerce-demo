@@ -126,12 +126,13 @@ export async function getPages(): Promise<Page[]> {
 export async function getProduct(handle: string): Promise<Product | undefined> {
   const product = mockProducts.find((p) => p.handle === handle);
   if (product) {
-    product.availableForSale = true;
-    product.variants.forEach((variant) => {
+    const clonedProduct = JSON.parse(JSON.stringify(product));
+    clonedProduct.availableForSale = true;
+    clonedProduct.variants.forEach((variant: any) => {
       variant.availableForSale = true;
     });
+    return clonedProduct;
   }
-  return product;
 }
 
 export async function getProductRecommendations(productId: string): Promise<Product[]> {
