@@ -12,9 +12,10 @@ export function CurrencySelector() {
         onChange={(e) => setCurrency(e.target.value as any)}
         className="appearance-none rounded border bg-black py-2 pl-3 pr-8 text-sm text-white"
       >
-        <option value="USD">USD</option>
         <option value="EUR">EUR</option>
         <option value="GBP">GBP</option>
+        <option value="PLN">PLN</option>
+        <option value="JPY">JPY</option>
       </select>
       <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-white">
         <svg

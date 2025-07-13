@@ -2,7 +2,7 @@
 
 import { createContext, ReactNode, useContext, useState } from 'react';
 
-type Currency = 'USD' | 'EUR' | 'GBP';
+type Currency = 'EUR' | 'GBP' | 'PLN' | 'JPY';
 
 type CurrencyContextType = {
   currency: Currency;
@@ -12,7 +12,7 @@ type CurrencyContextType = {
 const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined);
 
 export function CurrencyProvider({ children }: { children: ReactNode }) {
-  const [currency, setCurrency] = useState<Currency>('USD');
+  const [currency, setCurrency] = useState<Currency>('EUR');
 
   return (
     <CurrencyContext.Provider value={{ currency, setCurrency }}>

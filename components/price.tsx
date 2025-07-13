@@ -3,21 +3,23 @@
 import { useCurrency } from 'components/currency-context';
 
 const conversionRates = {
-  USD: 1,
-  EUR: 0.85,
-  GBP: 0.74
+  EUR: 1,
+  GBP: 0.85,
+  PLN: 4.5, // Placeholder
+  JPY: 165 // Placeholder
 };
 
 const currencySymbols = {
-  USD: '$',
   EUR: '€',
-  GBP: '£'
+  GBP: '£',
+  PLN: 'zł',
+  JPY: '¥'
 };
 
 const Price = ({
   amount,
   className,
-  currencyCode = 'USD',
+  currencyCode = 'EUR',
   currencyCodeClassName
 }: {
   amount: string;
