@@ -2202,25 +2202,25 @@ export const mockProducts: Product[] = [
     images: [
       {
         url: imagePath("t-shirt-spiral-1.png"),
-        altText: "Acme Prism T-Shirt - View 1",
+        altText: "Acme Prism T-Shirt",
         width: 1000,
         height: 1000,
       },
       {
         url: imagePath("t-shirt-spiral-2.png"),
-        altText: "Acme Prism T-Shirt - View 2",
+        altText: "Acme Prism T-Shirt - Alternative View 1",
         width: 1000,
         height: 1000,
       },
       {
         url: imagePath("t-shirt-spiral-3.png"),
-        altText: "Acme Prism T-Shirt - View 3",
+        altText: "Acme Prism T-Shirt - Alternative View 2",
         width: 1000,
         height: 1000,
       },
       {
         url: imagePath("t-shirt-spiral-4.png"),
-        altText: "Acme Prism T-Shirt - View 4",
+        altText: "Acme Prism T-Shirt - Alternative View 3",
         width: 1000,
         height: 1000,
       },

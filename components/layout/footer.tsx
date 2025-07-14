@@ -5,6 +5,7 @@ import { getMenu } from 'lib/shopify-mock/client';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import { CurrencySelector } from './currency-selector';
+import { LanguageSelector } from './language-selector';
 
 const { COMPANY_NAME, SITE_NAME } = process.env;
 
@@ -61,9 +62,14 @@ export default async function Footer({
             {copyrightName.length && !copyrightName.endsWith('.') ? '.' : ''}{' '}
             {dictionary.footer.allRightsReserved}
           </p>
-          <Suspense fallback={null}>
-            <CurrencySelector />
-          </Suspense>
+          <div className="flex items-center gap-6">
+            <Suspense fallback={null}>
+              <LanguageSelector />
+            </Suspense>
+            <Suspense fallback={null}>
+              <CurrencySelector />
+            </Suspense>
+          </div>
         </div>
       </div>
     </footer>
