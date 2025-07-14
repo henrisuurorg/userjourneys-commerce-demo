@@ -1,3 +1,4 @@
+import { getDictionary } from '@/lib/dictionaries';
 import { Carousel } from "components/carousel";
 import { ThreeItemGrid } from "components/grid/three-items";
 import Footer from "components/layout/footer";
@@ -10,12 +11,13 @@ export const metadata = {
   },
 };
 
-export default function HomePage() {
+export default async function HomePage({ params }: { params: { lang: 'en' | 'et' } }) {
+  const dictionary = await getDictionary(params.lang);
   return (
     <>
       <ThreeItemGrid />
       <Carousel />
-      <Footer />
+      <Footer dictionary={dictionary} />
     </>
   );
 }

@@ -6,13 +6,13 @@ import { sorting } from 'lib/constants';
 import { Suspense } from 'react';
 import ChildrenWrapper from './children-wrapper';
 
-export default async function SearchLayout({
-  children,
-  params
-}: {
+export default async function SearchLayout(
+  props: {
   children: React.ReactNode;
-  params: { lang: 'en' | 'et' };
+  params: Promise<{ lang: 'en' | 'et' }>;
 }) {
+  const { children } = props;
+  const params = await props.params;
   const dictionary = await getDictionary(params.lang);
   return (
     <>

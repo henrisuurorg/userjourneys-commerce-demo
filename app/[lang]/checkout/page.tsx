@@ -34,7 +34,10 @@ function CheckoutActions({
   );
 }
 
-export default async function CheckoutPage({ params }: { params: { lang: 'en' | 'et' } }) {
+export default async function CheckoutPage(
+  props: { params: Promise<{ lang: 'en' | 'et' }> }
+) {
+  const params = await props.params;
   const cart = await getCart();
   const dictionary = await getDictionary(params.lang);
 

@@ -13,11 +13,10 @@ import { Image } from 'lib/shopify-mock/types';
 import Link from 'next/link';
 import { Suspense } from 'react';
 
-export async function generateMetadata({
-  params
-}: {
-  params: { handle: string; lang: 'en' | 'et' };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: { params: Promise<{ handle: string; lang: 'en' | 'et' }> }
+): Promise<Metadata> {
+  const params = await props.params;
   const product = await getProduct(params.handle);
 
   if (!product) return notFound();
@@ -51,11 +50,10 @@ export async function generateMetadata({
   };
 }
 
-export default async function ProductPage({
-  params
-}: {
-  params: { handle: string; lang: 'en' | 'et' };
-}) {
+export default async function ProductPage(
+  props: { params: Promise<{ handle: string; lang: 'en' | 'et' }> }
+) {
+  const params = await props.params;
   const dictionary = await getDictionary(params.lang);
   const product = await getProduct(params.handle);
 
@@ -105,13 +103,13 @@ export default async function ProductPage({
 
           <div className="basis-full lg:basis-2/6">
             <Suspense fallback={null}>
-              <ProductDescription product={product} dictionary={dictionary.product} />
+              <ProductDescription product={product} dictionary={dictionary} />
             </Suspense>
           </div>
         </div>
         <RelatedProducts id={product.id} dictionary={dictionary.product} />
       </div>
-      <Footer dictionary={dictionary.footer} />
+      <Footer dictionary={dictionary} />
     </ProductProvider>
   );
 }

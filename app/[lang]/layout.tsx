@@ -17,8 +17,9 @@ const inter = Inter({
   variable: '--font-inter'
 });
 
-export async function generateMetadata({ params: { lang } }: { params: { lang: 'en' | 'et' } }) {
-  // TODO: It would be better to have site name and description in dictionariesœ
+export async function generateMetadata(props: { params: Promise<{ lang: 'en' | 'et' }> }) {
+  const { lang } = await props.params;
+  // TODO: It would be better to have site name and description in dictionaries
   const { SITE_NAME } = process.env;
 
   return {
@@ -47,13 +48,12 @@ export async function generateMetadata({ params: { lang } }: { params: { lang: '
   };
 }
 
-export default async function RootLayout({
-  children,
-  params
-}: {
+export default async function RootLayout(props: {
   children: ReactNode;
-  params: { lang: 'en' | 'et' };
+  params: Promise<{ lang: 'en' | 'et' }>;
 }) {
+  const { children } = props;
+  const params = await props.params;
   const cart = getCart();
   const dictionary = await getDictionary(params.lang);
 
