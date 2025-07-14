@@ -30,14 +30,14 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.shiftKey) {
         if (event.code === "KeyR") {
-          posthog.reset();
           posthog.startSessionRecording();
-          console.log("New PostHog session started and recording.");
+          console.log("PostHog session recording started.");
         }
 
         if (event.code === "KeyS") {
           posthog.stopSessionRecording();
           console.log("PostHog session recording stopped.");
+          posthog.reset();
         }
       }
     };
