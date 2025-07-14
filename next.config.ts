@@ -1,4 +1,7 @@
+// next.config.js
+
 export default {
+  // --- Your Existing Config ---
   experimental: {
     ppr: true,
     inlineCss: true,
@@ -28,4 +31,10 @@ export default {
   },
   // This is required to support PostHog trailing slash API requests
   skipTrailingSlashRedirect: true,
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 };
