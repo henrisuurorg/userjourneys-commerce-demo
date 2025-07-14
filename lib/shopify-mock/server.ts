@@ -1,9 +1,9 @@
+import type { Locale } from 'i18n-config';
 import { TAGS } from 'lib/constants';
 import { revalidateTag } from 'next/cache';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
-import { mockProducts } from '../mock-data';
-import type { Cart, CartCost, CartProduct } from './types';
+import type { Cart, CartCost, CartProduct, Product } from './types';
 
 type SimpleCartItem = {
   merchandiseId: string;
@@ -32,8 +32,9 @@ async function getCartPayloadFromCookie(): Promise<CartPayload> {
   return { items: [], promoCode: undefined };
 }
 
-export async function getCart(): Promise<Cart> {
+export async function getCart(lang: Locale): Promise<Cart> {
   const cartPayload = await getCartPayloadFromCookie();
+  const { mockProducts }: { mockProducts: Product[] } = await import(`../mock-data/${lang}.ts`);
 
   if (cartPayload.items.length === 0) {
     return {
@@ -83,7 +84,18 @@ export async function getCart(): Promise<Cart> {
           id: variant.id,
           title: variant.title,
           selectedOptions: variant.selectedOptions,
-          product: productForCart as CartProduct,
+          product: {
+            ...productForCart,
+            // Ensure the image URL is correctly formed
+            featuredImage: {
+              ...productForCart.featuredImage,
+              url: productForCart.featuredImage.url
+            },
+            images: productForCart.images.map((image) => ({
+              ...image,
+              url: image.url
+            }))
+          } as CartProduct,
           availableForSale: variant.availableForSale
         }
       });

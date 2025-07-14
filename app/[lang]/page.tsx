@@ -15,8 +15,8 @@ export default async function HomePage(props: { params: Promise<{ lang: 'en' | '
   const dictionary = await getDictionary(params.lang);
   return (
     <>
-      <ThreeItemGrid />
-      <Carousel />
+      <ThreeItemGrid lang={params.lang} />
+      <Carousel lang={params.lang} />
       <Footer dictionary={dictionary} />
     </>
   );

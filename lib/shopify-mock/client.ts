@@ -1,26 +1,27 @@
-import { mockProducts } from '../mock-data';
-import {
-  Collection,
-  Menu,
-  Page,
-  Product
-} from './types';
+import type { Locale } from 'i18n-config';
+import { Collection, Menu, Page, Product } from './types';
 
 // Functions that are safe to run on the client
-export async function getCollection(handle: string): Promise<Collection | undefined> {
-  const allCollections = await getCollections();
+export async function getCollection(
+  handle: string,
+  lang: Locale
+): Promise<Collection | undefined> {
+  const allCollections = await getCollections(lang);
   return allCollections.find((col) => col.handle === handle);
 }
 
 export async function getCollectionProducts({
   collection,
   reverse,
-  sortKey
+  sortKey,
+  lang
 }: {
   collection: string;
   reverse?: boolean;
   sortKey?: string;
+  lang: Locale;
 }): Promise<Product[]> {
+  const { mockProducts }: { mockProducts: Product[] } = await import(`../mock-data/${lang}.ts`);
   if (collection === 'hidden-homepage-featured-items') {
     return mockProducts.slice(0, 3);
   }
@@ -33,7 +34,8 @@ export async function getCollectionProducts({
   return products;
 }
 
-export async function getCollections(): Promise<Collection[]> {
+export async function getCollections(lang: Locale): Promise<Collection[]> {
+  const { mockProducts }: { mockProducts: Product[] } = await import(`../mock-data/${lang}.ts`);
   const allTags = new Set<string>();
   mockProducts.forEach((p) => p.tags.forEach((t: string) => allTags.add(t)));
 
@@ -63,7 +65,7 @@ export async function getCollections(): Promise<Collection[]> {
   return collections;
 }
 
-export async function getMenu(handle: string): Promise<Menu[]> {
+export async function getMenu(handle: string, lang: Locale): Promise<Menu[]> {
   if (handle === 'next-js-frontend-header-menu') {
     return [
       { title: 'All', path: '/search' },
@@ -84,7 +86,7 @@ export async function getMenu(handle: string): Promise<Menu[]> {
   }
 
   // Fallback for other menus
-  const collections = await getCollections();
+  const collections = await getCollections(lang);
   const menu = collections.map((c) => ({
     title: c.title,
     path: c.path
@@ -123,7 +125,8 @@ export async function getPages(): Promise<Page[]> {
   ];
 }
 
-export async function getProduct(handle: string): Promise<Product | undefined> {
+export async function getProduct(handle: string, lang: Locale): Promise<Product | undefined> {
+  const { mockProducts }: { mockProducts: Product[] } = await import(`../mock-data/${lang}.ts`);
   const product = mockProducts.find((p) => p.handle === handle);
   if (product) {
     const clonedProduct = JSON.parse(JSON.stringify(product));
@@ -135,7 +138,11 @@ export async function getProduct(handle: string): Promise<Product | undefined> {
   }
 }
 
-export async function getProductRecommendations(productId: string): Promise<Product[]> {
+export async function getProductRecommendations(
+  productId: string,
+  lang: Locale
+): Promise<Product[]> {
+  const { mockProducts }: { mockProducts: Product[] } = await import(`../mock-data/${lang}.ts`);
   // Create a simple hash from productId to ensure consistent results
   const hash = productId.split('').reduce((a, b) => {
     a = (a << 5) - a + b.charCodeAt(0);
@@ -165,12 +172,15 @@ export async function getProductRecommendations(productId: string): Promise<Prod
 export async function getProducts({
   query,
   reverse,
-  sortKey
+  sortKey,
+  lang
 }: {
   query?: string;
   reverse?: boolean;
   sortKey?: string;
+  lang: Locale;
 }): Promise<Product[]> {
+  const { mockProducts }: { mockProducts: Product[] } = await import(`../mock-data/${lang}.ts`);
   let products = [...mockProducts];
 
   if (query) {

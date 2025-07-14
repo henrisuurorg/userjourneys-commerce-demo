@@ -55,7 +55,7 @@ export default async function RootLayout(props: {
 }) {
   const { children } = props;
   const params = await props.params;
-  const cart = getCart();
+  const cart = getCart(params.lang);
   const dictionary = await getDictionary(params.lang);
 
   return (

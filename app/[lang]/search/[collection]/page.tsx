@@ -7,10 +7,10 @@ import ProductGridItems from 'components/layout/product-grid-items';
 import { defaultSort, sorting } from 'lib/constants';
 
 export async function generateMetadata(props: {
-  params: Promise<{ collection: string }>;
+  params: Promise<{ collection: string; lang: 'en' | 'et' }>;
 }): Promise<Metadata> {
   const params = await props.params;
-  const collection = await getCollection(params.collection);
+  const collection = await getCollection(params.collection, params.lang);
 
   if (!collection) return notFound();
 
@@ -22,14 +22,19 @@ export async function generateMetadata(props: {
 }
 
 export default async function CategoryPage(props: {
-  params: Promise<{ collection: string }>;
+  params: Promise<{ collection: string; lang: 'en' | 'et' }>;
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const searchParams = await props.searchParams;
   const params = await props.params;
   const { sort } = searchParams as { [key: string]: string };
   const { sortKey, reverse } = sorting.find((item) => item.slug === sort) || defaultSort;
-  const products = await getCollectionProducts({ collection: params.collection, sortKey, reverse });
+  const products = await getCollectionProducts({
+    collection: params.collection,
+    sortKey,
+    reverse,
+    lang: params.lang
+  });
 
   return (
     <section>

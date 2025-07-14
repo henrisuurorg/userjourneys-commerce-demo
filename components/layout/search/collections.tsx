@@ -2,15 +2,18 @@ import clsx from 'clsx';
 import { Suspense } from 'react';
 
 import type { getDictionary } from '@/lib/dictionaries';
+import type { Locale } from 'i18n-config';
 import { getCollections } from 'lib/shopify-mock/client';
 import FilterList from './filter';
 
 async function CollectionList({
-  dictionary
+  dictionary,
+  lang
 }: {
   dictionary: Awaited<ReturnType<typeof getDictionary>>;
+  lang: Locale;
 }) {
-  const collections = await getCollections();
+  const collections = await getCollections(lang);
   return <FilterList list={collections} title={dictionary.search.collections} dictionary={dictionary.sorting} />;
 }
 
@@ -19,9 +22,11 @@ const activeAndTitles = 'bg-neutral-800 dark:bg-neutral-300';
 const items = 'bg-neutral-400 dark:bg-neutral-700';
 
 export default function Collections({
-  dictionary
+  dictionary,
+  lang
 }: {
   dictionary: Awaited<ReturnType<typeof getDictionary>>;
+  lang: Locale;
 }) {
   return (
     <Suspense
@@ -40,7 +45,7 @@ export default function Collections({
         </div>
       }
     >
-      <CollectionList dictionary={dictionary} />
+      <CollectionList dictionary={dictionary} lang={lang} />
     </Suspense>
   );
 }

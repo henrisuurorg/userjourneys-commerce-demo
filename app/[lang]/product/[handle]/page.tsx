@@ -17,7 +17,7 @@ export async function generateMetadata(
   props: { params: Promise<{ handle: string; lang: 'en' | 'et' }> }
 ): Promise<Metadata> {
   const params = await props.params;
-  const product = await getProduct(params.handle);
+  const product = await getProduct(params.handle, params.lang);
 
   if (!product) return notFound();
 
@@ -55,7 +55,7 @@ export default async function ProductPage(
 ) {
   const params = await props.params;
   const dictionary = await getDictionary(params.lang);
-  const product = await getProduct(params.handle);
+  const product = await getProduct(params.handle, params.lang);
 
   if (!product) return notFound();
 
@@ -107,7 +107,7 @@ export default async function ProductPage(
             </Suspense>
           </div>
         </div>
-        <RelatedProducts id={product.id} dictionary={dictionary.product} />
+        <RelatedProducts id={product.id} dictionary={dictionary.product} lang={params.lang} />
       </div>
       <Footer dictionary={dictionary} />
     </ProductProvider>
@@ -116,12 +116,14 @@ export default async function ProductPage(
 
 async function RelatedProducts({
   id,
-  dictionary
+  dictionary,
+  lang
 }: {
   id: string;
   dictionary: Awaited<ReturnType<typeof getDictionary>>['product'];
+  lang: 'en' | 'et';
 }) {
-  const relatedProducts = await getProductRecommendations(id);
+  const relatedProducts = await getProductRecommendations(id, lang);
 
   if (!relatedProducts.length) return null;
 

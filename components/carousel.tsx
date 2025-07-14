@@ -1,10 +1,14 @@
+import type { Locale } from 'i18n-config';
 import { getCollectionProducts } from 'lib/shopify-mock/client';
 import Link from 'next/link';
 import { GridTileImage } from './grid/tile';
 
-export async function Carousel() {
+export async function Carousel({ lang }: { lang: Locale }) {
   // Collections that start with `hidden-*` are hidden from the search page.
-  const products = await getCollectionProducts({ collection: 'hidden-homepage-carousel' });
+  const products = await getCollectionProducts({
+    collection: 'hidden-homepage-carousel',
+    lang
+  });
 
   if (!products?.length) return null;
 
