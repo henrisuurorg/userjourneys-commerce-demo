@@ -12,10 +12,6 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    if (posthog.__loaded) {
-      posthog.reset();
-    }
-
     posthog.init(posthogKey, {
       api_host: "/api/event",
       ui_host: "https://eu.posthog.com",
