@@ -54,8 +54,6 @@ pnpm dev
 ```
 Once the server is running, open `http://localhost:3000` in your browser.
 
-Of course. Here is a clear and concise way to add instructions for setting up a local Git repository, designed to be easy for both Mac and Windows users.
-
 ---
 
 **7. Set Up Git**
@@ -95,8 +93,6 @@ The challenge consists of two 30-minute parts.
 
 1.  **Part One:** Using only the source code, run the application to find and fix as many bugs as possible.
 2.  **Part Two:** Using a provided list of known bugs, fix as many as you can.
-
-Got it. Here is the updated version with the mention of documentation.
 
 ---
 
