@@ -3,7 +3,6 @@
 import posthog from "posthog-js";
 import { PostHogProvider as PHProvider } from "posthog-js/react";
 import { useEffect } from "react";
-import { toast } from "sonner";
 
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
@@ -31,14 +30,13 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.shiftKey) {
         if (event.code === "KeyR") {
+          posthog.reset();
           posthog.startSessionRecording();
-          toast.success("PostHog session recording started.");
-          console.log("PostHog session recording started.");
+          console.log("New PostHog session started and recording.");
         }
 
         if (event.code === "KeyS") {
           posthog.stopSessionRecording();
-          toast.info("PostHog session recording stopped.");
           console.log("PostHog session recording stopped.");
         }
       }
