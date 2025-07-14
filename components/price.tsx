@@ -1,20 +1,6 @@
 'use client';
 
-import { useCurrency } from 'components/currency-context';
-
-const conversionRates = {
-  EUR: 1,
-  GBP: 0.85,
-  PLN: 4.5, // Placeholder
-  JPY: 165 // Placeholder
-};
-
-const currencySymbols = {
-  EUR: '€',
-  GBP: '£',
-  PLN: 'zł',
-  JPY: '¥'
-};
+import { useCurrency } from '@/components/currency-context';
 
 const Price = ({
   amount,
@@ -29,10 +15,7 @@ const Price = ({
 } & React.ComponentProps<'p'>) => {
   const { currency: selectedCurrency } = useCurrency();
 
-  // Temporary comment for testing currency display
-  // const convertedAmount =
-  //   (parseFloat(amount) * conversionRates[selectedCurrency as keyof typeof conversionRates]) /
-  //   conversionRates[currencyCode as keyof typeof conversionRates];
+  // TODO: add API for currency conversion
   const convertedAmount = parseFloat(amount);
 
   const displayAmount = new Intl.NumberFormat(undefined, {
