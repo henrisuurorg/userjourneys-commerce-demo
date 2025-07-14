@@ -1,10 +1,15 @@
 'use client';
 
+import type { getDictionary } from '@/lib/dictionaries';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import Form from 'next/form';
 import { useSearchParams } from 'next/navigation';
 
-export default function Search() {
+export default function Search({
+  dictionary
+}: {
+  dictionary: Awaited<ReturnType<typeof getDictionary>>;
+}) {
   const searchParams = useSearchParams();
 
   return (
@@ -13,7 +18,7 @@ export default function Search() {
         key={searchParams?.get('q')}
         type="text"
         name="q"
-        placeholder="Search for products..."
+        placeholder={dictionary.search.placeholder}
         autoComplete="off"
         defaultValue={searchParams?.get('q') || ''}
         className="text-md w-full rounded-lg border bg-white px-4 py-2 text-black placeholder:text-neutral-500 md:text-sm dark:border-neutral-800 dark:bg-transparent dark:text-white dark:placeholder:text-neutral-400"

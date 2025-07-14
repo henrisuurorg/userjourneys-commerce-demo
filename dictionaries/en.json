@@ -1,0 +1,85 @@
+{
+  "sorting": {
+    "relevance": "Relevance",
+    "trending": "Trending",
+    "latestArrivals": "Latest arrivals",
+    "priceLowToHigh": "Price: Low to high",
+    "priceHighToLow": "Price: High to low"
+  },
+  "footer": {
+    "designedIn": "Designed in California",
+    "allRightsReserved": "All rights reserved."
+  },
+  "headerMenu": {
+    "all": "All",
+    "shirts": "Shirts",
+    "stickers": "Stickers"
+  },
+  "footerMenu": {
+    "home": "Home",
+    "about": "About",
+    "terms": "Terms & Conditions",
+    "shipping": "Shipping & Return Policy",
+    "privacy": "Privacy Policy",
+    "faq": "FAQ"
+  },
+  "search": {
+    "placeholder": "Search for products...",
+    "collections": "Collections",
+    "filter": "Filter",
+    "sortBy": "Sort by",
+    "noResults": "No products found",
+    "resultsFor": "Showing results for"
+  },
+  "cart": {
+    "myCart": "My Cart",
+    "addToCart": "Add to cart",
+    "outOfStock": "Out of stock",
+    "quantity": "Quantity",
+    "total": "Total",
+    "taxes": "Taxes",
+    "shipping": "Shipping",
+    "proceedToCheckout": "Proceed to Checkout",
+    "item": "Item",
+    "price": "Price",
+    "continueShopping": "Continue Shopping",
+    "yourCartIsEmpty": "Your cart is empty.",
+    "delete": "Delete",
+    "loading": "Loading..."
+  },
+  "product": {
+    "quantity": "Quantity",
+    "productDescription": "Product Description",
+    "relatedProducts": "Related Products"
+  },
+  "checkout": {
+    "confirmation": "Confirmation",
+    "thankYou": "Thank you for your order!",
+    "order": "Order",
+    "mockCheckout": "Mock Checkout",
+    "disclaimer": "This is a mock checkout page. No real payment will be processed.",
+    "payment": "Payment",
+    "shippingAddress": "Shipping Address",
+    "contactInformation": "Contact Information",
+    "paymentMethod": "Payment Method",
+    "billingAddress": "Billing Address",
+    "sameAsShipping": "Same as shipping address",
+    "payNow": "Pay Now"
+  },
+  "common": {
+    "logo": "Acme Logo"
+  },
+  "label": {
+    "outOfStock": "Out of Stock",
+    "sale": "Sale"
+  },
+  "opengraph": {
+    "products": "Products",
+    "allProducts": "All Products"
+  },
+  "error": {
+    "error": "Error",
+    "somethingWentWrong": "Something went wrong. Please try again later.",
+    "thisPageCouldNotExist": "This page might not exist or has been removed."
+  }
+}

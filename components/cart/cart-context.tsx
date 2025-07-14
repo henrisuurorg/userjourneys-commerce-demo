@@ -1,18 +1,20 @@
 'use client';
 
 import type {
-  Cart,
-  CartItem,
-  Product,
-  ProductVariant
+    Cart,
+    CartItem,
+    Product,
+    ProductVariant
 } from 'lib/shopify-mock/types';
 import React, {
-  createContext,
-  use,
-  useCallback,
-  useContext,
-  useMemo,
-  useOptimistic
+    createContext,
+    use,
+    useCallback,
+    useContext,
+    useEffect,
+    useMemo,
+    useOptimistic,
+    useState
 } from 'react';
 
 type UpdateType = 'plus' | 'minus' | 'delete';
@@ -29,6 +31,8 @@ type CartAction =
 
 type CartContextType = {
   cartPromise: Promise<Cart | undefined>;
+  isOpen: boolean;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -196,8 +200,9 @@ export function CartProvider({
   children: React.ReactNode;
   cartPromise: Promise<Cart | undefined>;
 }) {
+  const [isOpen, setIsOpen] = useState(false);
   return (
-    <CartContext.Provider value={{ cartPromise }}>
+    <CartContext.Provider value={{ cartPromise, isOpen, setIsOpen }}>
       {children}
     </CartContext.Provider>
   );
@@ -210,10 +215,18 @@ export function useCart() {
   }
 
   const initialCart = use(context.cartPromise);
-  const [optimisticCart, updateOptimisticCart] = useOptimistic(
-    initialCart,
-    cartReducer
-  );
+  const [optimisticCart, updateOptimisticCart] = useOptimistic(initialCart, cartReducer);
+
+  const openCart = () => context.setIsOpen(true);
+  const closeCart = () => context.setIsOpen(false);
+
+  useEffect(() => {
+    if (optimisticCart && optimisticCart.totalQuantity > (initialCart?.totalQuantity ?? 0)) {
+      if (!context.isOpen) {
+        context.setIsOpen(true);
+      }
+    }
+  }, [optimisticCart, initialCart, context]);
 
   const updateCartItem = useCallback(
     (merchandiseId: string, updateType: UpdateType) => {
@@ -236,8 +249,11 @@ export function useCart() {
     () => ({
       cart: optimisticCart,
       updateCartItem,
-      addCartItem
+      addCartItem,
+      openCart,
+      closeCart,
+      isOpen: context.isOpen
     }),
-    [optimisticCart, addCartItem, updateCartItem]
+    [optimisticCart, addCartItem, updateCartItem, context.isOpen, openCart, closeCart]
   );
 }

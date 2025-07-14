@@ -1,3 +1,4 @@
+import type { getDictionary } from '@/lib/dictionaries';
 import FooterMenu from 'components/layout/footer-menu';
 import LogoSquare from 'components/logo-square';
 import { getMenu } from 'lib/shopify-mock/client';
@@ -7,7 +8,11 @@ import { CurrencySelector } from './currency-selector';
 
 const { COMPANY_NAME, SITE_NAME } = process.env;
 
-export default async function Footer() {
+export default async function Footer({
+  dictionary
+}: {
+  dictionary: Awaited<ReturnType<typeof getDictionary>>;
+}) {
   const currentYear = new Date().getFullYear();
   const copyrightDate = 2023 + (currentYear > 2023 ? `-${currentYear}` : '');
   const skeleton = 'w-full h-6 animate-pulse rounded-sm bg-neutral-200 dark:bg-neutral-700';
@@ -35,7 +40,7 @@ export default async function Footer() {
             </div>
           }
         >
-          <FooterMenu menu={menu} />
+          <FooterMenu menu={menu} dictionary={dictionary.footerMenu} />
         </Suspense>
         <div className="md:ml-auto">
           <a
@@ -53,7 +58,8 @@ export default async function Footer() {
         <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-6 px-4 md:flex-row md:justify-between md:px-4 min-[1320px]:px-0">
           <p>
             &copy; {copyrightDate} {copyrightName}
-            {copyrightName.length && !copyrightName.endsWith('.') ? '.' : ''} All rights reserved.
+            {copyrightName.length && !copyrightName.endsWith('.') ? '.' : ''}{' '}
+            {dictionary.footer.allRightsReserved}
           </p>
           <Suspense fallback={null}>
             <CurrencySelector />

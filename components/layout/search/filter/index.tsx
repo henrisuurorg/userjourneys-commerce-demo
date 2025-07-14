@@ -1,3 +1,4 @@
+import type { getDictionary } from '@/lib/dictionaries';
 import { SortFilterItem } from 'lib/constants';
 import { Suspense } from 'react';
 import FilterItemDropdown from './dropdown';
@@ -6,17 +7,31 @@ import { FilterItem } from './item';
 export type ListItem = SortFilterItem | PathFilterItem;
 export type PathFilterItem = { title: string; path: string };
 
-function FilterItemList({ list }: { list: ListItem[] }) {
+function FilterItemList({
+  list,
+  dictionary
+}: {
+  list: ListItem[];
+  dictionary: Awaited<ReturnType<typeof getDictionary>>['sorting'];
+}) {
   return (
     <>
       {list.map((item: ListItem, i) => (
-        <FilterItem key={i} item={item} />
+        <FilterItem key={i} item={item} dictionary={dictionary} />
       ))}
     </>
   );
 }
 
-export default function FilterList({ list, title }: { list: ListItem[]; title?: string }) {
+export default function FilterList({
+  list,
+  title,
+  dictionary
+}: {
+  list: ListItem[];
+  title?: string;
+  dictionary: Awaited<ReturnType<typeof getDictionary>>['sorting'];
+}) {
   return (
     <>
       <nav>
@@ -27,12 +42,12 @@ export default function FilterList({ list, title }: { list: ListItem[]; title?: 
         ) : null}
         <ul className="hidden md:block">
           <Suspense fallback={null}>
-            <FilterItemList list={list} />
+            <FilterItemList list={list} dictionary={dictionary} />
           </Suspense>
         </ul>
         <ul className="md:hidden">
           <Suspense fallback={null}>
-            <FilterItemDropdown list={list} />
+            <FilterItemDropdown list={list} dictionary={dictionary} />
           </Suspense>
         </ul>
       </nav>

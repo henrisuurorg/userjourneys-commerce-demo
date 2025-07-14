@@ -1,7 +1,8 @@
+import type { getDictionary } from '@/lib/dictionaries';
+import { Menu } from '@/lib/shopify-mock/types';
 import CartModal from 'components/cart/modal';
 import LogoSquare from 'components/logo-square';
 import { getMenu } from 'lib/shopify-mock/client';
-import { Menu } from 'lib/shopify-mock/types';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import MobileMenu from './mobile-menu';
@@ -9,14 +10,25 @@ import Search, { SearchSkeleton } from './search';
 
 const { SITE_NAME } = process.env;
 
-export async function Navbar() {
+export async function Navbar({
+  dictionary
+}: {
+  dictionary: Awaited<ReturnType<typeof getDictionary>>;
+}) {
   const menu = await getMenu('next-js-frontend-header-menu');
+  const translatedMenu = menu.map((item: Menu) => {
+    const key = item.title.toLowerCase() as keyof typeof dictionary.headerMenu;
+    return {
+      ...item,
+      title: dictionary.headerMenu[key] || item.title
+    };
+  });
 
   return (
     <nav className="relative flex items-center justify-between p-4 lg:px-6">
       <div className="block flex-none md:hidden">
         <Suspense fallback={null}>
-          <MobileMenu menu={menu} />
+          <MobileMenu menu={translatedMenu} dictionary={dictionary} />
         </Suspense>
       </div>
       <div className="flex w-full items-center">
@@ -31,9 +43,9 @@ export async function Navbar() {
               {SITE_NAME}
             </div>
           </Link>
-          {menu.length ? (
+          {translatedMenu.length ? (
             <ul className="hidden gap-6 text-sm md:flex md:items-center">
-              {menu.map((item: Menu) => (
+              {translatedMenu.map((item: Menu) => (
                 <li key={item.title}>
                   <Link
                     href={item.path}
@@ -49,11 +61,13 @@ export async function Navbar() {
         </div>
         <div className="hidden justify-center md:flex md:w-1/3">
           <Suspense fallback={<SearchSkeleton />}>
-            <Search />
+            <Search dictionary={dictionary} />
           </Suspense>
         </div>
         <div className="flex justify-end md:w-1/3">
-          <CartModal />
+          <Suspense fallback={null}>
+            <CartModal dictionary={dictionary} />
+          </Suspense>
         </div>
       </div>
     </nav>

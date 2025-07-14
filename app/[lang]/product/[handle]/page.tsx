@@ -1,3 +1,4 @@
+import { getDictionary } from '@/lib/dictionaries';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
@@ -12,10 +13,11 @@ import { Image } from 'lib/shopify-mock/types';
 import Link from 'next/link';
 import { Suspense } from 'react';
 
-export async function generateMetadata(props: {
-  params: Promise<{ handle: string }>;
+export async function generateMetadata({
+  params
+}: {
+  params: { handle: string; lang: 'en' | 'et' };
 }): Promise<Metadata> {
-  const params = await props.params;
   const product = await getProduct(params.handle);
 
   if (!product) return notFound();
@@ -49,8 +51,12 @@ export async function generateMetadata(props: {
   };
 }
 
-export default async function ProductPage(props: { params: Promise<{ handle: string }> }) {
-  const params = await props.params;
+export default async function ProductPage({
+  params
+}: {
+  params: { handle: string; lang: 'en' | 'et' };
+}) {
+  const dictionary = await getDictionary(params.lang);
   const product = await getProduct(params.handle);
 
   if (!product) return notFound();
@@ -99,25 +105,31 @@ export default async function ProductPage(props: { params: Promise<{ handle: str
 
           <div className="basis-full lg:basis-2/6">
             <Suspense fallback={null}>
-              <ProductDescription product={product} />
+              <ProductDescription product={product} dictionary={dictionary.product} />
             </Suspense>
           </div>
         </div>
-        <RelatedProducts id={product.id} />
+        <RelatedProducts id={product.id} dictionary={dictionary.product} />
       </div>
-      <Footer />
+      <Footer dictionary={dictionary.footer} />
     </ProductProvider>
   );
 }
 
-async function RelatedProducts({ id }: { id: string }) {
+async function RelatedProducts({
+  id,
+  dictionary
+}: {
+  id: string;
+  dictionary: Awaited<ReturnType<typeof getDictionary>>['product'];
+}) {
   const relatedProducts = await getProductRecommendations(id);
 
   if (!relatedProducts.length) return null;
 
   return (
     <div className="py-8">
-      <h2 className="mb-4 text-2xl font-bold">Related Products</h2>
+      <h2 className="mb-4 text-2xl font-bold">{dictionary.relatedProducts}</h2>
       <ul className="flex w-full gap-4 overflow-x-auto pt-1">
         {relatedProducts.map((product) => (
           <li

@@ -1,13 +1,20 @@
 'use client';
 
+import type { getDictionary } from '@/lib/dictionaries';
 import clsx from 'clsx';
-import type { SortFilterItem } from 'lib/constants';
+import { SortFilterItem as SortFilterItemType } from 'lib/constants';
 import { createUrl } from 'lib/utils';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
-import type { ListItem, PathFilterItem } from '.';
+import type { ListItem, PathFilterItem as PathFilterItemType } from '.';
 
-function PathFilterItem({ item }: { item: PathFilterItem }) {
+function PathFilterItem({
+  item,
+  dictionary
+}: {
+  item: PathFilterItemType;
+  dictionary: Awaited<ReturnType<typeof getDictionary>>['sorting'];
+}) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const active = pathname === item.path;
@@ -33,7 +40,13 @@ function PathFilterItem({ item }: { item: PathFilterItem }) {
   );
 }
 
-function SortFilterItem({ item }: { item: SortFilterItem }) {
+function SortFilterItem({
+  item,
+  dictionary
+}: {
+  item: SortFilterItemType;
+  dictionary: Awaited<ReturnType<typeof getDictionary>>['sorting'];
+}) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const active = searchParams.get('sort') === item.slug;
@@ -46,6 +59,7 @@ function SortFilterItem({ item }: { item: SortFilterItem }) {
     })
   );
   const DynamicTag = active ? 'p' : Link;
+  const translatedTitle = dictionary[item.key] || item.title;
 
   return (
     <li className="mt-2 flex text-sm text-black dark:text-white" key={item.title}>
@@ -56,12 +70,22 @@ function SortFilterItem({ item }: { item: SortFilterItem }) {
           'underline underline-offset-4': active
         })}
       >
-        {item.title}
+        {translatedTitle}
       </DynamicTag>
     </li>
   );
 }
 
-export function FilterItem({ item }: { item: ListItem }) {
-  return 'path' in item ? <PathFilterItem item={item} /> : <SortFilterItem item={item} />;
+export function FilterItem({
+  item,
+  dictionary
+}: {
+  item: ListItem;
+  dictionary: Awaited<ReturnType<typeof getDictionary>>['sorting'];
+}) {
+  return 'path' in item ? (
+    <PathFilterItem item={item} dictionary={dictionary} />
+  ) : (
+    <SortFilterItem item={item} dictionary={dictionary} />
+  );
 }

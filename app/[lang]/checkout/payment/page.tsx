@@ -1,15 +1,22 @@
 'use client';
 
+import { getDictionary } from '@/lib/dictionaries';
 import { useCart } from 'components/cart/cart-context';
 import LoadingDots from 'components/loading-dots';
 import Price from 'components/price';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-export default function PaymentPage() {
+export default function PaymentPage({ params }: { params: { lang: 'en' | 'et' } }) {
   const router = useRouter();
   const { cart } = useCart();
   const [isLoading, setIsLoading] = useState(false);
+  const [dictionary, setDictionary] =
+    useState<Awaited<ReturnType<typeof getDictionary>> | null>(null);
+
+  useEffect(() => {
+    getDictionary(params.lang).then(setDictionary);
+  }, [params.lang]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -21,10 +28,10 @@ export default function PaymentPage() {
     }, 2000);
   };
 
-  if (!cart || cart.lines.length === 0) {
+  if (!dictionary || !cart || cart.lines.length === 0) {
     return (
       <div className="flex h-full flex-col items-center justify-center p-6 text-center">
-        <h1 className="mb-4 text-2xl font-bold">Your cart is empty.</h1>
+        <h1 className="mb-4 text-2xl font-bold">{dictionary?.cart.yourCartIsEmpty}</h1>
       </div>
     );
   }
@@ -33,7 +40,7 @@ export default function PaymentPage() {
     <div className="min-h-screen bg-gray-50 py-12 dark:bg-gray-900">
       <div className="mx-auto max-w-lg rounded-lg bg-white p-8 shadow-md dark:bg-black">
         <h1 className="mb-6 border-b border-gray-200 pb-4 text-3xl font-bold text-gray-800 dark:border-gray-700 dark:text-white">
-          Payment Details
+          {dictionary.checkout.payment}
         </h1>
 
         {/* Order Summary */}
@@ -53,7 +60,7 @@ export default function PaymentPage() {
             ))}
             {/* TODO: This total is calculated incorrectly, needs to account for discounts. */}
             <div className="flex justify-between border-t border-gray-200 pt-2 font-bold dark:border-gray-700">
-              <span>Total</span>
+              <span>{dictionary.cart.total}</span>
               <Price
                 amount={cart.cost.subtotalAmount.amount}
                 currencyCode={cart.cost.subtotalAmount.currencyCode}
@@ -135,7 +142,11 @@ export default function PaymentPage() {
               disabled={isLoading}
               className="w-full rounded-md bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
             >
-              {isLoading ? <LoadingDots className="bg-white" /> : `Pay Now`}
+              {isLoading ? (
+                <LoadingDots className="bg-white" />
+              ) : (
+                <span>{dictionary.checkout.payNow}</span>
+              )}
             </button>
           </div>
         </form>

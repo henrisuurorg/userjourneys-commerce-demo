@@ -3,11 +3,18 @@
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
+import type { getDictionary } from '@/lib/dictionaries';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
 import type { ListItem } from '.';
 import { FilterItem } from './item';
 
-export default function FilterItemDropdown({ list }: { list: ListItem[] }) {
+export default function FilterItemDropdown({
+  list,
+  dictionary
+}: {
+  list: ListItem[];
+  dictionary: Awaited<ReturnType<typeof getDictionary>>['sorting'];
+}) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [active, setActive] = useState('');
@@ -31,10 +38,14 @@ export default function FilterItemDropdown({ list }: { list: ListItem[] }) {
         ('path' in listItem && pathname === listItem.path) ||
         ('slug' in listItem && searchParams.get('sort') === listItem.slug)
       ) {
-        setActive(listItem.title);
+        const key =
+          'key' in listItem
+            ? (listItem.key as keyof typeof dictionary)
+            : (listItem.title.toLowerCase() as keyof typeof dictionary);
+        setActive(dictionary[key] || listItem.title);
       }
     });
-  }, [pathname, list, searchParams]);
+  }, [pathname, list, searchParams, dictionary]);
 
   return (
     <div className="relative" ref={ref}>
@@ -55,7 +66,7 @@ export default function FilterItemDropdown({ list }: { list: ListItem[] }) {
           className="absolute z-40 w-full rounded-b-md bg-white p-4 shadow-md dark:bg-black"
         >
           {list.map((item: ListItem, i) => (
-            <FilterItem key={i} item={item} />
+            <FilterItem key={i} item={item} dictionary={dictionary} />
           ))}
         </div>
       )}

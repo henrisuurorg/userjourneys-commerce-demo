@@ -1,9 +1,16 @@
+import { getDictionary } from '@/lib/dictionaries';
 import Price from 'components/price';
 import { getCart } from 'lib/shopify-mock/server';
 import { CartItem } from 'lib/shopify-mock/types';
 import Link from 'next/link';
 
-function CheckoutActions({ cart }: { cart: { lines: CartItem[] } }) {
+function CheckoutActions({
+  cart,
+  dictionary
+}: {
+  cart: { lines: CartItem[] };
+  dictionary: Awaited<ReturnType<typeof getDictionary>>['checkout'];
+}) {
   const anyItemOutOfStock = cart.lines.some((item) => !item.merchandise.availableForSale);
 
   if (anyItemOutOfStock) {
@@ -12,7 +19,7 @@ function CheckoutActions({ cart }: { cart: { lines: CartItem[] } }) {
         className="block w-full cursor-not-allowed rounded-md bg-gray-400 px-6 py-3 text-center font-semibold text-white"
         aria-disabled="true"
       >
-        Proceed to Payment
+        {dictionary.payment}
       </div>
     );
   }
@@ -22,18 +29,19 @@ function CheckoutActions({ cart }: { cart: { lines: CartItem[] } }) {
       href="/checkout/payment"
       className="block w-full rounded-md bg-blue-600 px-6 py-3 text-center font-semibold text-white hover:bg-blue-700"
     >
-      Proceed to Payment
+      {dictionary.payment}
     </Link>
   );
 }
 
-export default async function CheckoutPage() {
+export default async function CheckoutPage({ params }: { params: { lang: 'en' | 'et' } }) {
   const cart = await getCart();
+  const dictionary = await getDictionary(params.lang);
 
   if (!cart || cart.lines.length === 0) {
     return (
       <div className="flex h-full flex-col items-center justify-center p-6 text-center">
-        <h1 className="mb-4 text-2xl font-bold">Your cart is empty.</h1>
+        <h1 className="mb-4 text-2xl font-bold">{dictionary.cart.yourCartIsEmpty}</h1>
       </div>
     );
   }
@@ -42,7 +50,7 @@ export default async function CheckoutPage() {
     <div className="min-h-screen bg-gray-50 py-12 dark:bg-gray-900">
       <div className="mx-auto max-w-lg rounded-lg bg-white p-8 shadow-md dark:bg-black">
         <h1 className="mb-6 border-b border-gray-200 pb-4 text-3xl font-bold text-gray-800 dark:border-gray-700 dark:text-white">
-          Review Your Order
+          {dictionary.checkout.order}
         </h1>
 
         <div className="mb-6 space-y-4">
@@ -58,10 +66,10 @@ export default async function CheckoutPage() {
                   {item.merchandise.product.title}
                 </p>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {item.merchandise.title} | Qty: {item.quantity}
+                  {item.merchandise.title} | {dictionary.cart.quantity}: {item.quantity}
                 </p>
                 {!item.merchandise.availableForSale && (
-                  <p className="text-sm text-red-500">Out of Stock</p>
+                  <p className="text-sm text-red-500">{dictionary.cart.outOfStock}</p>
                 )}
               </div>
               <Price
@@ -82,11 +90,11 @@ export default async function CheckoutPage() {
             />
           </div>
           <div className="flex justify-between text-gray-600 dark:text-gray-300">
-            <span>Shipping</span>
+            <span>{dictionary.cart.shipping}</span>
             <span>Calculated at next step</span>
           </div>
           <div className="flex justify-between text-gray-600 dark:text-gray-300">
-            <span>Taxes</span>
+            <span>{dictionary.cart.taxes}</span>
             <span>Calculated at next step</span>
           </div>
           {cart.cost.discountAmount && cart.cost.discountAmount.amount !== '0.0' && (
@@ -99,7 +107,7 @@ export default async function CheckoutPage() {
             </div>
           )}
           <div className="flex justify-between border-t border-gray-200 pt-2 text-xl font-bold text-gray-800 dark:border-gray-700 dark:text-white">
-            <span>Total</span>
+            <span>{dictionary.cart.total}</span>
             <Price
               amount={cart.cost.totalAmount.amount}
               currencyCode={cart.cost.totalAmount.currencyCode}
@@ -108,7 +116,7 @@ export default async function CheckoutPage() {
         </div>
 
         <div className="mt-8">
-          <CheckoutActions cart={cart} />
+          <CheckoutActions cart={cart} dictionary={dictionary.checkout} />
         </div>
       </div>
     </div>

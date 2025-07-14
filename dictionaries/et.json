@@ -1,0 +1,85 @@
+{
+  "sorting": {
+    "relevance": "Asjakohasus",
+    "trending": "Populaarsed",
+    "latestArrivals": "Uusimad saabusid",
+    "priceLowToHigh": "Hind: madalast kõrgeni",
+    "priceHighToLow": "Hind: kõrgest madalani"
+  },
+  "footer": {
+    "designedIn": "Disainitud Californias",
+    "allRightsReserved": "Kõik õigused kaitstud."
+  },
+  "headerMenu": {
+    "all": "Kõik",
+    "shirts": "Särgid",
+    "stickers": "Kleebised"
+  },
+  "footerMenu": {
+    "home": "Avaleht",
+    "about": "Meist",
+    "terms": "Tingimused",
+    "shipping": "Kohaletoimetamise ja tagastamise poliitika",
+    "privacy": "Privaatsuspoliitika",
+    "faq": "KKK"
+  },
+  "search": {
+    "placeholder": "Otsi tooteid...",
+    "collections": "Kollektsioonid",
+    "filter": "Filtreeri",
+    "sortBy": "Sorteeri",
+    "noResults": "Tooteid ei leitud",
+    "resultsFor": "Kuvatakse tulemused"
+  },
+  "cart": {
+    "myCart": "Minu ostukorv",
+    "addToCart": "Lisa ostukorvi",
+    "outOfStock": "Läbi müüdud",
+    "quantity": "Kogus",
+    "total": "Kokku",
+    "taxes": "Maksud",
+    "shipping": "Kohaletoimetamine",
+    "proceedToCheckout": "Jätka kassasse",
+    "item": "Toode",
+    "price": "Hind",
+    "continueShopping": "Jätka ostlemist",
+    "yourCartIsEmpty": "Sinu ostukorv on tühi.",
+    "delete": "Kustuta",
+    "loading": "Laadimine..."
+  },
+  "product": {
+    "quantity": "Kogus",
+    "productDescription": "Tootekirjeldus",
+    "relatedProducts": "Seotud tooted"
+  },
+  "checkout": {
+    "confirmation": "Kinnitus",
+    "thankYou": "Täname tellimuse eest!",
+    "order": "Tellimus",
+    "mockCheckout": "Testkassa",
+    "disclaimer": "See on testkassa leht. Päris makseid ei töödelda.",
+    "payment": "Maksmine",
+    "shippingAddress": "Tarneaadress",
+    "contactInformation": "Kontaktandmed",
+    "paymentMethod": "Makseviis",
+    "billingAddress": "Arveldusaadress",
+    "sameAsShipping": "Sama mis tarneaadress",
+    "payNow": "Maksa kohe"
+  },
+  "common": {
+    "logo": "Acme Logo"
+  },
+  "label": {
+    "outOfStock": "Läbi müüdud",
+    "sale": "Soodus"
+  },
+  "opengraph": {
+    "products": "Tooted",
+    "allProducts": "Kõik tooted"
+  },
+  "error": {
+    "error": "Viga",
+    "somethingWentWrong": "Midagi läks valesti. Palun proovi hiljem uuesti.",
+    "thisPageCouldNotExist": "Seda lehte ei pruugi eksisteerida või see on eemaldatud."
+  }
+}

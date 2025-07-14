@@ -1,5 +1,6 @@
 'use client';
 
+import type { getDictionary } from '@/lib/dictionaries';
 import { Dialog, Transition } from '@headlessui/react';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
@@ -9,7 +10,13 @@ import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { Menu } from 'lib/shopify-mock/types';
 import Search, { SearchSkeleton } from './search';
 
-export default function MobileMenu({ menu }: { menu: Menu[] }) {
+export default function MobileMenu({
+  menu,
+  dictionary
+}: {
+  menu: Menu[];
+  dictionary: Awaited<ReturnType<typeof getDictionary>>;
+}) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isOpen, setIsOpen] = useState(false);
@@ -73,7 +80,7 @@ export default function MobileMenu({ menu }: { menu: Menu[] }) {
 
                 <div className="mb-4 w-full">
                   <Suspense fallback={<SearchSkeleton />}>
-                    <Search />
+                    <Search dictionary={dictionary} />
                   </Suspense>
                 </div>
                 {menu.length ? (

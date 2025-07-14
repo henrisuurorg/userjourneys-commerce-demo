@@ -1,13 +1,22 @@
 'use client';
 
+import { getDictionary } from '@/lib/dictionaries';
 import { clearCart } from 'components/cart/actions';
 import Link from 'next/link';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
-export default function ConfirmationPage() {
+export default function ConfirmationPage({ params }: { params: { lang: 'en' | 'et' } }) {
+  const [dictionary, setDictionary] =
+    useState<Awaited<ReturnType<typeof getDictionary>> | null>(null);
+
   useEffect(() => {
     clearCart();
-  }, []);
+    getDictionary(params.lang).then(setDictionary);
+  }, [params.lang]);
+
+  if (!dictionary) {
+    return null;
+  }
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 p-6 text-center dark:bg-gray-900">
@@ -27,16 +36,16 @@ export default function ConfirmationPage() {
           />
         </svg>
         <h1 className="mt-4 text-2xl font-bold text-gray-800 dark:text-white">
-          Order Confirmed!
+          {dictionary.checkout.confirmation}!
         </h1>
         <p className="mb-6 mt-2 text-gray-600 dark:text-gray-300">
-          Thank you for your purchase. Your order #ACME12345 has been placed.
+          {dictionary.checkout.thankYou} Your order #ACME12345 has been placed.
         </p>
         <Link
           href="/"
           className="rounded-md bg-blue-600 px-6 py-2 font-semibold text-white hover:bg-blue-700"
         >
-          Continue Shopping
+          {dictionary.cart.continueShopping}
         </Link>
       </div>
     </div>

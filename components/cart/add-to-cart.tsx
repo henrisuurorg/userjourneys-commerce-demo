@@ -1,5 +1,6 @@
 'use client';
 
+import type { getDictionary } from '@/lib/dictionaries';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import { addItem } from 'components/cart/actions';
@@ -10,10 +11,12 @@ import { useCart } from './cart-context';
 
 function SubmitButton({
   availableForSale,
-  selectedVariantId
+  selectedVariantId,
+  dictionary
 }: {
   availableForSale: boolean;
   selectedVariantId: string | undefined;
+  dictionary: Awaited<ReturnType<typeof getDictionary>>['cart'];
 }) {
   const buttonClasses =
     'relative flex w-full items-center justify-center rounded-full bg-blue-600 p-4 tracking-wide text-white';
@@ -22,7 +25,7 @@ function SubmitButton({
   if (!availableForSale) {
     return (
       <button disabled className={clsx(buttonClasses, disabledClasses)}>
-        Out Of Stock
+        {dictionary.outOfStock}
       </button>
     );
   }
@@ -37,7 +40,7 @@ function SubmitButton({
         <div className="absolute left-0 ml-4">
           <PlusIcon className="h-5" />
         </div>
-        Add To Cart
+        {dictionary.addToCart}
       </button>
     );
   }
@@ -52,12 +55,18 @@ function SubmitButton({
       <div className="absolute left-0 ml-4">
         <PlusIcon className="h-5" />
       </div>
-      Add To Cart
+      {dictionary.addToCart}
     </button>
   );
 }
 
-export function AddToCart({ product }: { product: Product }) {
+export function AddToCart({
+  product,
+  dictionary
+}: {
+  product: Product;
+  dictionary: Awaited<ReturnType<typeof getDictionary>>;
+}) {
   const { variants, availableForSale } = product;
   const { addCartItem } = useCart();
   const { state } = useProduct();
@@ -85,6 +94,7 @@ export function AddToCart({ product }: { product: Product }) {
       <SubmitButton
         availableForSale={availableForSale}
         selectedVariantId={selectedVariantId}
+        dictionary={dictionary.cart}
       />
       <p aria-live="polite" className="sr-only" role="status">
         {message}
