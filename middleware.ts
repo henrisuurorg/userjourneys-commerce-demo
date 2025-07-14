@@ -1,3 +1,5 @@
+// middleware.ts
+
 import { NextRequest, NextResponse } from 'next/server';
 import { i18n } from './i18n-config';
 
@@ -38,7 +40,6 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Skip all internal paths (_next)
-    '/((?!api|_next/static|_next/image|assets|favicon.ico|sw.js).*)'
+    '/((?!api|_next/static|_next/image|assets|favicon.ico|sw.js|product-images).*)'
   ]
-}; 
+};
