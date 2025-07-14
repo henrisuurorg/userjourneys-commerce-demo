@@ -10,6 +10,7 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
     const posthogKey = process.env.NEXT_PUBLIC_POSTHOG_KEY;
 
     if (!posthogKey) {
+      console.log("PostHog key not found");
       return;
     }
 
@@ -29,13 +30,13 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.shiftKey) {
-        if (event.key === "r") {
+        if (event.code === "KeyR") {
           posthog.startSessionRecording();
           toast.success("PostHog session recording started.");
           console.log("PostHog session recording started.");
         }
 
-        if (event.key === "s") {
+        if (event.code === "KeyS") {
           posthog.stopSessionRecording();
           toast.info("PostHog session recording stopped.");
           console.log("PostHog session recording stopped.");
