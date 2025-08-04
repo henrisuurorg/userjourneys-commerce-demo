@@ -1,27 +1,29 @@
-'use client';
+"use client";
 
-import { useCurrency } from '@/components/currency-context';
+import { useCurrency } from "@/components/currency-context";
+import LoadingDots from "components/loading-dots";
 
 const Price = ({
   amount,
   className,
-  currencyCode = 'EUR',
-  currencyCodeClassName
+  currencyCode = "EUR",
 }: {
   amount: string;
   className?: string;
   currencyCode: string;
-  currencyCodeClassName?: string;
-} & React.ComponentProps<'p'>) => {
-  const { currency: selectedCurrency } = useCurrency();
+} & React.ComponentProps<"p">) => {
+  const { currency: selectedCurrency, rates, isLoading } = useCurrency();
 
-  // TODO: add API for currency conversion
-  const convertedAmount = parseFloat(amount);
+  if (isLoading) {
+    return <LoadingDots className="bg-white" />;
+  }
+
+  const convertedAmount = parseFloat(amount) * (rates[selectedCurrency] ?? 1);
 
   const displayAmount = new Intl.NumberFormat(undefined, {
-    style: 'currency',
+    style: "currency",
     currency: selectedCurrency,
-    currencyDisplay: 'narrowSymbol'
+    currencyDisplay: "narrowSymbol",
   }).format(convertedAmount);
 
   return (

@@ -1,18 +1,20 @@
-'use client';
+"use client";
 
-import { useCurrency } from 'components/currency-context';
+import { useCurrency } from "components/currency-context";
 
 export function CurrencySelector() {
-  const { currency, setCurrency } = useCurrency();
+  const { currency, setCurrency, isLoading } = useCurrency();
 
   return (
     <div className="relative">
       <select
         value={currency}
         onChange={(e) => setCurrency(e.target.value as any)}
-        className="appearance-none rounded border bg-black py-2 pl-3 pr-8 text-sm text-white"
+        disabled={isLoading}
+        className="appearance-none rounded border bg-black py-2 pl-3 pr-8 text-sm text-white disabled:opacity-50"
       >
         <option value="EUR">EUR</option>
+        <option value="USD">USD</option>
         <option value="GBP">GBP</option>
         <option value="PLN">PLN</option>
         <option value="JPY">JPY</option>
@@ -28,4 +30,4 @@ export function CurrencySelector() {
       </div>
     </div>
   );
-} 
+}
