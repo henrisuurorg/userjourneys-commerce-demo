@@ -13,13 +13,90 @@ export default function PaymentPage({ params }: { params: { lang: 'en' | 'et' } 
   const [isLoading, setIsLoading] = useState(false);
   const [dictionary, setDictionary] =
     useState<Awaited<ReturnType<typeof getDictionary>> | null>(null);
+  const [errors, setErrors] = useState<{
+    cardNumber?: string;
+    expiryDate?: string;
+    cvc?: string;
+    nameOnCard?: string;
+  }>({});
 
   useEffect(() => {
     getDictionary(params.lang).then(setDictionary);
   }, [params.lang]);
 
+  const validateCardNumber = (value: string): boolean => {
+    const cleaned = value.replace(/\s/g, '');
+    if (!/^\d{13,19}$/.test(cleaned)) {
+      return false;
+    }
+    let sum = 0;
+    let isEven = false;
+    for (let i = cleaned.length - 1; i >= 0; i--) {
+      let digit = parseInt(cleaned[i], 10);
+      if (isEven) {
+        digit *= 2;
+        if (digit > 9) {
+          digit -= 9;
+        }
+      }
+      sum += digit;
+      isEven = !isEven;
+    }
+    return sum % 10 === 0;
+  };
+
+  const validateExpiryDate = (value: string): boolean => {
+    const match = value.match(/^(0[1-9]|1[0-2])\s*\/\s*(\d{2})$/);
+    if (!match) return false;
+    
+    const month = parseInt(match[1], 10);
+    const year = parseInt(match[2], 10) + 2000;
+    const now = new Date();
+    const expiry = new Date(year, month - 1);
+    
+    return expiry > now;
+  };
+
+  const validateCVC = (value: string): boolean => {
+    return /^\d{3,4}$/.test(value);
+  };
+
+  const validateNameOnCard = (value: string): boolean => {
+    return value.trim().length >= 2 && /^[a-zA-Z\s'-]+$/.test(value);
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const cardNumber = formData.get('card-number') as string;
+    const expiryDate = formData.get('expiry-date') as string;
+    const cvc = formData.get('cvc') as string;
+    const nameOnCard = formData.get('name-on-card') as string;
+
+    const newErrors: typeof errors = {};
+
+    if (!validateCardNumber(cardNumber)) {
+      newErrors.cardNumber = 'Please enter a valid card number';
+    }
+
+    if (!validateExpiryDate(expiryDate)) {
+      newErrors.expiryDate = 'Please enter a valid expiry date (MM/YY)';
+    }
+
+    if (!validateCVC(cvc)) {
+      newErrors.cvc = 'Please enter a valid CVC (3-4 digits)';
+    }
+
+    if (!validateNameOnCard(nameOnCard)) {
+      newErrors.nameOnCard = 'Please enter a valid name';
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setErrors({});
     setIsLoading(true);
 
     // Simulate network request and redirect
@@ -82,9 +159,18 @@ export default function PaymentPage({ params }: { params: { lang: 'en' | 'et' } 
               <input
                 type="text"
                 id="card-number"
-                className="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 text-sm shadow-sm dark:border-gray-600 dark:bg-gray-700"
+                name="card-number"
+                className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm dark:bg-gray-700 ${
+                  errors.cardNumber 
+                    ? 'border-red-500 dark:border-red-500' 
+                    : 'border-gray-300 dark:border-gray-600'
+                }`}
                 placeholder="1234 5678 9101 1121"
+                required
               />
+              {errors.cardNumber && (
+                <p className="mt-1 text-xs text-red-500">{errors.cardNumber}</p>
+              )}
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -97,9 +183,18 @@ export default function PaymentPage({ params }: { params: { lang: 'en' | 'et' } 
                 <input
                   type="text"
                   id="expiry-date"
-                  className="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 text-sm shadow-sm dark:border-gray-600 dark:bg-gray-700"
+                  name="expiry-date"
+                  className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm dark:bg-gray-700 ${
+                    errors.expiryDate 
+                      ? 'border-red-500 dark:border-red-500' 
+                      : 'border-gray-300 dark:border-gray-600'
+                  }`}
                   placeholder="MM / YY"
+                  required
                 />
+                {errors.expiryDate && (
+                  <p className="mt-1 text-xs text-red-500">{errors.expiryDate}</p>
+                )}
               </div>
               <div>
                 <label
@@ -111,9 +206,18 @@ export default function PaymentPage({ params }: { params: { lang: 'en' | 'et' } 
                 <input
                   type="text"
                   id="cvc"
-                  className="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 text-sm shadow-sm dark:border-gray-600 dark:bg-gray-700"
+                  name="cvc"
+                  className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm dark:bg-gray-700 ${
+                    errors.cvc 
+                      ? 'border-red-500 dark:border-red-500' 
+                      : 'border-gray-300 dark:border-gray-600'
+                  }`}
                   placeholder="123"
+                  required
                 />
+                {errors.cvc && (
+                  <p className="mt-1 text-xs text-red-500">{errors.cvc}</p>
+                )}
               </div>
             </div>
             <div>
@@ -126,9 +230,18 @@ export default function PaymentPage({ params }: { params: { lang: 'en' | 'et' } 
               <input
                 type="text"
                 id="name-on-card"
-                className="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 text-sm shadow-sm dark:border-gray-600 dark:bg-gray-700"
+                name="name-on-card"
+                className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm dark:bg-gray-700 ${
+                  errors.nameOnCard 
+                    ? 'border-red-500 dark:border-red-500' 
+                    : 'border-gray-300 dark:border-gray-600'
+                }`}
                 placeholder="John Doe"
+                required
               />
+              {errors.nameOnCard && (
+                <p className="mt-1 text-xs text-red-500">{errors.nameOnCard}</p>
+              )}
             </div>
           </div>
 
