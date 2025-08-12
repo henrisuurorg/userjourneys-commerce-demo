@@ -13,13 +13,115 @@ export default function PaymentPage({ params }: { params: { lang: 'en' | 'et' } 
   const [isLoading, setIsLoading] = useState(false);
   const [dictionary, setDictionary] =
     useState<Awaited<ReturnType<typeof getDictionary>> | null>(null);
+  const [errors, setErrors] = useState<{
+    cardNumber?: string;
+    expiryDate?: string;
+    cvc?: string;
+    nameOnCard?: string;
+  }>({});
+  const [formData, setFormData] = useState({
+    cardNumber: '',
+    expiryDate: '',
+    cvc: '',
+    nameOnCard: ''
+  });
 
   useEffect(() => {
     getDictionary(params.lang).then(setDictionary);
   }, [params.lang]);
 
+  const validateCardNumber = (value: string): boolean => {
+    const cleanedValue = value.replace(/\s/g, '');
+    if (!/^\d{13,19}$/.test(cleanedValue)) {
+      return false;
+    }
+    
+    let sum = 0;
+    let shouldDouble = false;
+    for (let i = cleanedValue.length - 1; i >= 0; i--) {
+      let digit = parseInt(cleanedValue.charAt(i), 10);
+      if (shouldDouble) {
+        digit *= 2;
+        if (digit > 9) digit -= 9;
+      }
+      sum += digit;
+      shouldDouble = !shouldDouble;
+    }
+    return sum % 10 === 0;
+  };
+
+  const validateExpiryDate = (value: string): boolean => {
+    const regex = /^(0[1-9]|1[0-2])\s*\/\s*(\d{2})$/;
+    const match = value.match(regex);
+    if (!match) return false;
+    
+    const month = parseInt(match[1], 10);
+    const year = parseInt(match[2], 10);
+    const currentYear = new Date().getFullYear() % 100;
+    const currentMonth = new Date().getMonth() + 1;
+    
+    if (year < currentYear || (year === currentYear && month < currentMonth)) {
+      return false;
+    }
+    
+    return true;
+  };
+
+  const validateCVC = (value: string): boolean => {
+    return /^\d{3,4}$/.test(value);
+  };
+
+  const validateNameOnCard = (value: string): boolean => {
+    return value.trim().length >= 2 && /^[a-zA-Z\s'-]+$/.test(value);
+  };
+
+  const handleInputChange = (field: keyof typeof formData, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: undefined }));
+    }
+  };
+
+  const formatCardNumber = (value: string): string => {
+    const cleaned = value.replace(/\D/g, '');
+    const groups = cleaned.match(/.{1,4}/g);
+    return groups ? groups.join(' ') : cleaned;
+  };
+
+  const formatExpiryDate = (value: string): string => {
+    const cleaned = value.replace(/\D/g, '');
+    if (cleaned.length >= 2) {
+      return cleaned.slice(0, 2) + ' / ' + cleaned.slice(2, 4);
+    }
+    return cleaned;
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    const newErrors: typeof errors = {};
+    
+    if (!validateCardNumber(formData.cardNumber)) {
+      newErrors.cardNumber = 'Please enter a valid card number';
+    }
+    
+    if (!validateExpiryDate(formData.expiryDate)) {
+      newErrors.expiryDate = 'Please enter a valid expiry date (MM / YY)';
+    }
+    
+    if (!validateCVC(formData.cvc)) {
+      newErrors.cvc = 'Please enter a valid CVC (3-4 digits)';
+    }
+    
+    if (!validateNameOnCard(formData.nameOnCard)) {
+      newErrors.nameOnCard = 'Please enter a valid name';
+    }
+    
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    
     setIsLoading(true);
 
     // Simulate network request and redirect
@@ -82,9 +184,25 @@ export default function PaymentPage({ params }: { params: { lang: 'en' | 'et' } 
               <input
                 type="text"
                 id="card-number"
-                className="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 text-sm shadow-sm dark:border-gray-600 dark:bg-gray-700"
+                className={`mt-1 block w-full rounded-md px-3 py-2 text-sm shadow-sm ${
+                  errors.cardNumber
+                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                    : 'border-gray-300 dark:border-gray-600'
+                } dark:bg-gray-700`}
                 placeholder="1234 5678 9101 1121"
+                value={formData.cardNumber}
+                onChange={(e) => {
+                  const formatted = formatCardNumber(e.target.value);
+                  if (formatted.replace(/\s/g, '').length <= 19) {
+                    handleInputChange('cardNumber', formatted);
+                  }
+                }}
+                maxLength={23}
+                required
               />
+              {errors.cardNumber && (
+                <p className="mt-1 text-xs text-red-600">{errors.cardNumber}</p>
+              )}
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -97,9 +215,25 @@ export default function PaymentPage({ params }: { params: { lang: 'en' | 'et' } 
                 <input
                   type="text"
                   id="expiry-date"
-                  className="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 text-sm shadow-sm dark:border-gray-600 dark:bg-gray-700"
+                  className={`mt-1 block w-full rounded-md px-3 py-2 text-sm shadow-sm ${
+                    errors.expiryDate
+                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 dark:border-gray-600'
+                  } dark:bg-gray-700`}
                   placeholder="MM / YY"
+                  value={formData.expiryDate}
+                  onChange={(e) => {
+                    const formatted = formatExpiryDate(e.target.value);
+                    if (e.target.value.replace(/\D/g, '').length <= 4) {
+                      handleInputChange('expiryDate', formatted);
+                    }
+                  }}
+                  maxLength={7}
+                  required
                 />
+                {errors.expiryDate && (
+                  <p className="mt-1 text-xs text-red-600">{errors.expiryDate}</p>
+                )}
               </div>
               <div>
                 <label
@@ -111,9 +245,25 @@ export default function PaymentPage({ params }: { params: { lang: 'en' | 'et' } 
                 <input
                   type="text"
                   id="cvc"
-                  className="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 text-sm shadow-sm dark:border-gray-600 dark:bg-gray-700"
+                  className={`mt-1 block w-full rounded-md px-3 py-2 text-sm shadow-sm ${
+                    errors.cvc
+                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 dark:border-gray-600'
+                  } dark:bg-gray-700`}
                   placeholder="123"
+                  value={formData.cvc}
+                  onChange={(e) => {
+                    const cleaned = e.target.value.replace(/\D/g, '');
+                    if (cleaned.length <= 4) {
+                      handleInputChange('cvc', cleaned);
+                    }
+                  }}
+                  maxLength={4}
+                  required
                 />
+                {errors.cvc && (
+                  <p className="mt-1 text-xs text-red-600">{errors.cvc}</p>
+                )}
               </div>
             </div>
             <div>
@@ -126,9 +276,19 @@ export default function PaymentPage({ params }: { params: { lang: 'en' | 'et' } 
               <input
                 type="text"
                 id="name-on-card"
-                className="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 text-sm shadow-sm dark:border-gray-600 dark:bg-gray-700"
+                className={`mt-1 block w-full rounded-md px-3 py-2 text-sm shadow-sm ${
+                  errors.nameOnCard
+                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                    : 'border-gray-300 dark:border-gray-600'
+                } dark:bg-gray-700`}
                 placeholder="John Doe"
+                value={formData.nameOnCard}
+                onChange={(e) => handleInputChange('nameOnCard', e.target.value)}
+                required
               />
+              {errors.nameOnCard && (
+                <p className="mt-1 text-xs text-red-600">{errors.nameOnCard}</p>
+              )}
             </div>
           </div>
 
